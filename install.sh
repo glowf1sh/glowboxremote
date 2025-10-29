@@ -32,7 +32,6 @@ SCRIPTS_DIR="$INSTALL_DIR/scripts"
 CLI_DIR="$INSTALL_DIR/cli"
 CLI_BINARY="$CLI_DIR/glowf1sh-license"
 CLI_SYMLINK="/usr/bin/glowf1sh-license"
-BOX_ID_CACHE="/etc/.glowf1sh-box-id"
 
 # Uninstall function
 uninstall_glowf1sh() {
@@ -201,6 +200,7 @@ uninstall_glowf1sh() {
 # Check for uninstall argument
 if [ "$1" = "--uninstall" ] || [ "$1" = "-u" ] || [ "$UNINSTALL" = "1" ]; then
     uninstall_glowf1sh
+    exit 0
 fi
 
 # Header
@@ -253,7 +253,7 @@ echo -e "  ${GREEN}✓${NC} Directories created"
 echo -e "${YELLOW}[2/13]${NC} Installing CLI tool..."
 
 # Expected CLI binary checksum (SHA256)
-CLI_EXPECTED_SHA256="4da45c1824807bab6c7793ffff13022f6c78bd453bad0f5310b99a9c3c346232"
+CLI_EXPECTED_SHA256="be925e2a566cfd8e0b89d5105f07a503ce27d0b878ef792670a4f6c8e7d86587"
 
 # Check if CLI binary exists in current directory (Git repo)
 if [ -f "./cli/glowf1sh-license" ]; then
@@ -330,39 +330,33 @@ fi
 
 echo -e "  ${GREEN}✓${NC} Hardware ID: [Generated and secured]"
 
-# Step 4: Generate Box ID (with recovery from local cache, then license server)
-echo -e "${YELLOW}[4/13]${NC} Generating Box ID..."
+# Step 4: Create temporary config.json (needed for CLI lookup-box-id)
+echo -e "${YELLOW}[4/13]${NC} Creating temporary config.json..."
+cat > "$CONFIG_DIR/config.json" <<EOF
+{
+  "box_id": "",
+  "hardware_id": "$HARDWARE_ID",
+  "license_url": "https://license.gl0w.bot/api",
+  "license_key": "",
+  "first_seen": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "installer_version": "2.0.0"
+}
+EOF
+chmod 400 "$CONFIG_DIR/config.json"
+chattr +i "$CONFIG_DIR/config.json"
+echo -e "  ${GREEN}✓${NC} Temporary config.json created"
+
+# Step 5: Generate Box ID (with recovery from license server via CLI)
+echo -e "${YELLOW}[5/13]${NC} Generating Box ID..."
 
 BOX_ID=""
 
-# Priority 1: Check local cache file (survives uninstall/reinstall)
-if [ -f "$BOX_ID_CACHE" ]; then
-    CACHED_BOX_ID=$(cat "$BOX_ID_CACHE" 2>/dev/null | tr -d '\n\r ')
-    if [ ! -z "$CACHED_BOX_ID" ] && [[ "$CACHED_BOX_ID" =~ ^gfbox-[a-z]+-[0-9]+$ ]]; then
-        BOX_ID="$CACHED_BOX_ID"
-        echo -e "  ${BLUE}→${NC} Box ID restored from local cache (persistent)"
-    fi
-fi
+# Try to recover Box ID from server (via CLI lookup-box-id command)
+BOX_ID=$("$CLI_BINARY" lookup-box-id 2>/dev/null || echo "")
 
-# Priority 2: Check if this hardware already has a registered box_id on server (Box ID Recovery)
-if [ -z "$BOX_ID" ]; then
-    if command -v jq &> /dev/null && command -v curl &> /dev/null; then
-        EXISTING_BOX_ID=$(curl -s --max-time 10 -X POST https://license.gl0w.bot/api/box/lookup-by-hardware \
-          -H "Content-Type: application/json" \
-          -H "X-Client-Type: glowfish-license-client" \
-          -H "X-Client-Auth: glowfish-client-v1-production-key-2025" \
-          -H "X-Client-Version: 2.0.0" \
-          -d "{\"hardware_id\":\"$HARDWARE_ID\"}" 2>/dev/null | jq -r '.box_id // empty' 2>/dev/null)
-
-        if [ ! -z "$EXISTING_BOX_ID" ] && [ "$EXISTING_BOX_ID" != "null" ]; then
-            BOX_ID="$EXISTING_BOX_ID"
-            echo -e "  ${BLUE}→${NC} Box ID recovered from license server"
-        fi
-    fi
-fi
-
-# Priority 3: Generate new box_id
-if [ -z "$BOX_ID" ]; then
+if [ ! -z "$BOX_ID" ]; then
+    echo -e "  ${BLUE}→${NC} Box ID recovered from license server: $BOX_ID"
+else
     # Generate new box ID (format: gfbox-<word>-<number>)
     # Words: gods, planets, stars, elements, creatures, demons, angels, animals, military, space missions, pokemon (max 12 chars)
     WORDS=(
@@ -381,17 +375,14 @@ if [ -z "$BOX_ID" ]; then
     RANDOM_WORD=${WORDS[$RANDOM % ${#WORDS[@]}]}
     RANDOM_NUM=$((RANDOM % 1000))
     BOX_ID=$(printf "gfbox-%s-%03d" "$RANDOM_WORD" "$RANDOM_NUM")
-    echo -e "  ${BLUE}→${NC} New Box ID generated"
+    echo -e "  ${BLUE}→${NC} New Box ID generated: $BOX_ID"
 fi
-
-# Save Box ID to persistent cache (survives uninstall)
-echo "$BOX_ID" > "$BOX_ID_CACHE"
-chmod 600 "$BOX_ID_CACHE"
 
 echo -e "  ${GREEN}✓${NC} Box ID: $BOX_ID"
 
-# Step 5: Create config.json
-echo -e "${YELLOW}[5/13]${NC} Creating config.json..."
+# Step 6: Update config.json with Box ID
+echo -e "${YELLOW}[6/13]${NC} Updating config.json with Box ID..."
+chattr -i "$CONFIG_DIR/config.json"
 cat > "$CONFIG_DIR/config.json" <<EOF
 {
   "box_id": "$BOX_ID",
@@ -404,10 +395,18 @@ cat > "$CONFIG_DIR/config.json" <<EOF
 EOF
 chmod 400 "$CONFIG_DIR/config.json"
 chattr +i "$CONFIG_DIR/config.json"
-echo -e "  ${GREEN}✓${NC} config.json created (secured with immutable flag)"
+echo -e "  ${GREEN}✓${NC} config.json updated with Box ID"
 
-# Step 6: Create initial license.json
-echo -e "${YELLOW}[6/13]${NC} Creating initial license.json..."
+# Step 7: Register box with license server
+echo -e "${YELLOW}[7/15]${NC} Registering box with license server..."
+if "$CLI_BINARY" register 2>/dev/null; then
+    echo -e "  ${GREEN}✓${NC} Box registered successfully"
+else
+    echo -e "  ${YELLOW}⚠${NC}  Warning: Could not register with license server (offline installation?)"
+fi
+
+# Step 8: Create initial license.json
+echo -e "${YELLOW}[8/15]${NC} Creating initial license.json..."
 cat > "$CONFIG_DIR/license.json" <<EOF
 {
   "status": "inactive",
@@ -425,7 +424,7 @@ chmod 600 "$CONFIG_DIR/license.json"
 echo -e "  ${GREEN}✓${NC} license.json created"
 
 # Step 7: Install Python dependencies
-echo -e "${YELLOW}[7/13]${NC} Installing Python dependencies..."
+echo -e "${YELLOW}[9/15]${NC} Installing Python dependencies..."
 if command -v pip3 &> /dev/null; then
     # Try to download requirements.txt from GitHub
     if curl -fsSL "$BASE_URL/requirements.txt" -o /tmp/requirements.txt 2>/dev/null; then
@@ -448,7 +447,7 @@ else
 fi
 
 # Step 8: Download and install Python modules
-echo -e "${YELLOW}[8/13]${NC} Installing Python modules..."
+echo -e "${YELLOW}[10/15]${NC} Installing Python modules..."
 
 MODULES=(
     "api_server.py"
@@ -500,7 +499,7 @@ else
 fi
 
 # Step 9: Download RIST modules
-echo -e "${YELLOW}[9/13]${NC} Installing RIST modules..."
+echo -e "${YELLOW}[11/15]${NC} Installing RIST modules..."
 
 RIST_MODULES=(
     "rist_manager.py"
@@ -540,7 +539,7 @@ else
 fi
 
 # Step 10: Download and verify GStreamer package
-echo -e "${YELLOW}[10/13]${NC} Installing GStreamer package..."
+echo -e "${YELLOW}[12/15]${NC} Installing GStreamer package..."
 echo "  Downloading GStreamer (this may take a moment)..."
 
 if curl -fsSL "$BASE_URL/gstreamer-arm64.tar.xz" -o /tmp/gstreamer-arm64.tar.xz 2>/dev/null && \
@@ -562,23 +561,9 @@ else
     echo -e "  ${YELLOW}⚠${NC}  GStreamer package not found (optional)"
 fi
 
-# Step 11: Register box with license server
-echo -e "${YELLOW}[11/13]${NC} Registering box with license server..."
-REGISTER_RESPONSE=$(curl -s -X POST https://license.gl0w.bot/api/box/register \
-  -H "Content-Type: application/json" \
-  -H "X-Client-Type: glowfish-license-client" \
-  -H "X-Client-Auth: glowfish-client-v1-production-key-2025" \
-  -H "X-Client-Version: 2.0.0" \
-  -d "{\"box_id\":\"$BOX_ID\",\"hardware_id\":\"$HARDWARE_ID\"}" 2>&1)
-
-if echo "$REGISTER_RESPONSE" | grep -q "success"; then
-    echo -e "  ${GREEN}✓${NC} Box registered successfully"
-else
-    echo -e "  ${YELLOW}⚠${NC}  Warning: Could not register with license server (offline installation?)"
-fi
-
-# Step 12: License activation (interactive)
-echo -e "${YELLOW}[12/13]${NC} License activation..."
+# Step 11: License activation (interactive)
+# Note: Box registration happens automatically during license activation via /api/box/activate
+echo -e "${YELLOW}[13/15]${NC} License activation..."
 
 # Only prompt if running in interactive terminal
 # Use /dev/tty to handle piped execution (curl | bash)
@@ -648,7 +633,7 @@ else
 fi
 
 # Step 13: Install systemd service, timer, and scripts
-echo -e "${YELLOW}[13/13]${NC} Installing system services..."
+echo -e "${YELLOW}[14/15]${NC} Installing system services..."
 
 # Download and install service file
 if curl -fsSL "$BASE_URL/systemd/glowf1sh-license-validator.service" -o /etc/systemd/system/glowf1sh-license-validator.service 2>/dev/null; then
