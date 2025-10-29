@@ -1,5 +1,5 @@
 [Unit]
-Description=Glowf1sh License Validator
+Description=Glowf1sh License Validator (Dead Man's Switch)
 Documentation=https://github.com/glowf1sh/glowboxremote
 After=network-online.target
 Wants=network-online.target

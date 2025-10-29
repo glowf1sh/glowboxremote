@@ -581,8 +581,10 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
             echo "  Activating license..."
             # Use the CLI binary for license activation
             if [ -f "$CLI_BINARY" ]; then
+                set +e  # Temporarily disable exit on error
                 ACTIVATE_OUTPUT=$("$CLI_BINARY" activate "$LICENSE_KEY" 2>&1)
                 EXIT_CODE=$?
+                set -e  # Re-enable exit on error
                 if [ $EXIT_CODE -eq 0 ]; then
                     echo -e "  ${GREEN}✓${NC} License activated successfully"
                     LICENSE_ACTIVATED=true
