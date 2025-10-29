@@ -1,0 +1,6 @@
+pyarmor==7.7.4
+websocket-client>=1.0.0
+websockets>=10.0
+requests>=2.25.0
+flask>=2.0.0
+psutil>=5.8.0

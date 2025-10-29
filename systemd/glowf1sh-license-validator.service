@@ -1,0 +1,25 @@
+[Unit]
+Description=Glowf1sh License Validator
+Documentation=https://github.com/glowf1sh/glowboxremote
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /opt/glowf1sh-remote/license-validator.py
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=glowf1sh-license
+
+# Security
+User=root
+ProtectSystem=strict
+ReadWritePaths=/opt/glowf1sh-remote/api
+PrivateTmp=yes
+NoNewPrivileges=yes
+
+# Restart policy
+Restart=no
+
+[Install]
+WantedBy=multi-user.target

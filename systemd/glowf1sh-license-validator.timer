@@ -1,0 +1,20 @@
+[Unit]
+Description=Glowf1sh License Validator Timer (runs every 30 minutes)
+Documentation=https://github.com/glowf1sh/glowboxremote
+Requires=glowf1sh-license-validator.service
+
+[Timer]
+# Run 5 minutes after boot
+OnBootSec=5min
+
+# Run every 30 minutes after the last activation
+OnUnitActiveSec=30min
+
+# Ensure timer is persistent across reboots
+Persistent=true
+
+# Use monotonic time (system uptime) instead of realtime
+AccuracySec=1min
+
+[Install]
+WantedBy=timers.target
