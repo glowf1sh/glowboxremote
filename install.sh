@@ -51,7 +51,7 @@ uninstall_glowf1sh() {
     if [ $FOUND_COMPONENTS -eq 0 ]; then
         echo -e "${YELLOW}⚠  Nothing to uninstall - no Glowf1sh components found${NC}"
         echo ""
-        exit 0
+        return 0
     fi
 
     echo -e "Found ${GREEN}$FOUND_COMPONENTS${NC} component(s) to remove"
@@ -238,7 +238,7 @@ echo -e "${GREEN}Starting installation...${NC}"
 echo ""
 
 # Step 1: Create directories
-echo -e "${YELLOW}[1/12]${NC} Creating installation directories..."
+echo -e "${YELLOW}[1/13]${NC} Creating installation directories..."
 mkdir -p "$CONFIG_DIR"
 mkdir -p "$BELABOX_API_DIR"
 mkdir -p "$RIST_DIR"
@@ -248,83 +248,11 @@ mkdir -p "$CLI_DIR"
 mkdir -p "$INSTALL_DIR/logs"
 echo -e "  ${GREEN}✓${NC} Directories created"
 
-# Step 2: Generate Box ID and hardware ID
-echo -e "${YELLOW}[2/12]${NC} Generating Box ID and Hardware ID..."
-
-# Generate hardware ID first (SHA256 of machine-id)
-if [ -f /etc/machine-id ]; then
-    HARDWARE_ID=$(sha256sum /etc/machine-id | awk '{print $1}')
-else
-    # Fallback: use CPU serial or generate random ID
-    HARDWARE_ID=$(cat /proc/cpuinfo 2>/dev/null | grep Serial | cut -d' ' -f2 | sha256sum | cut -d' ' -f1 2>/dev/null || cat /dev/urandom | tr -dc 'a-f0-9' | fold -w 64 | head -n 1)
-fi
-
-# Check if this hardware already has a registered box_id (Box ID Recovery)
-EXISTING_BOX_ID=""
-if command -v jq &> /dev/null && command -v curl &> /dev/null; then
-    EXISTING_BOX_ID=$(curl -s --max-time 10 -X POST https://license.gl0w.bot/api/box/lookup-by-hardware \
-      -H "Content-Type: application/json" \
-      -H "X-Client-Type: glowfish-license-client" \
-      -H "X-Client-Auth: glowfish-client-v1-production-key-2025" \
-      -H "X-Client-Version: 2.0.0" \
-      -d "{\"hardware_id\":\"$HARDWARE_ID\"}" 2>/dev/null | jq -r '.box_id // empty' 2>/dev/null)
-fi
-
-# Use existing box_id or generate new one
-if [ ! -z "$EXISTING_BOX_ID" ] && [ "$EXISTING_BOX_ID" != "null" ]; then
-    # Recovered existing box from previous installation
-    BOX_ID="$EXISTING_BOX_ID"
-    echo -e "  ${BLUE}→${NC} Box ID recovered from previous installation"
-else
-    # Generate new box ID (format: gfbox-<word>-<number>)
-    WORDS=("tiger" "löwe" "falke" "adler" "wolf" "bär" "luchs" "fuchs" "rabe" "eule" "hai" "orca" "gepard" "panther" "puma" "stern" "mond" "komet" "meteor" "nova" "orion" "sirius" "rasalhague" "vega" "antares" "rigel" "deneb" "altair")
-    RANDOM_WORD=${WORDS[$RANDOM % ${#WORDS[@]}]}
-    RANDOM_NUM=$((RANDOM % 1000))
-    BOX_ID=$(printf "gfbox-%s-%03d" "$RANDOM_WORD" "$RANDOM_NUM")
-fi
-
-echo -e "  ${GREEN}✓${NC} Box ID: $BOX_ID"
-echo -e "  ${GREEN}✓${NC} Hardware ID: [Generated and secured]"
-
-# Step 3: Create config.json
-echo -e "${YELLOW}[3/12]${NC} Creating config.json..."
-cat > "$CONFIG_DIR/config.json" <<EOF
-{
-  "box_id": "$BOX_ID",
-  "hardware_id": "$HARDWARE_ID",
-  "license_url": "https://license.gl0w.bot/api",
-  "license_key": "",
-  "first_seen": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-  "installer_version": "2.0.0"
-}
-EOF
-chmod 400 "$CONFIG_DIR/config.json"
-chattr +i "$CONFIG_DIR/config.json"
-echo -e "  ${GREEN}✓${NC} config.json created (secured with immutable flag)"
-
-# Step 4: Create initial license.json
-echo -e "${YELLOW}[4/12]${NC} Creating initial license.json..."
-cat > "$CONFIG_DIR/license.json" <<EOF
-{
-  "status": "inactive",
-  "tier": "free",
-  "jwt_token": "",
-  "expires_at": "",
-  "features": [],
-  "last_validated": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-  "grace_period_hours": 24,
-  "config_checksum": "",
-  "license_checksum": ""
-}
-EOF
-chmod 600 "$CONFIG_DIR/license.json"
-echo -e "  ${GREEN}✓${NC} license.json created"
-
-# Step 5: Install CLI binary from repository
-echo -e "${YELLOW}[5/12]${NC} Installing CLI tool..."
+# Step 2: Install CLI binary from repository (MOVED UP - needed for hardware ID)
+echo -e "${YELLOW}[2/13]${NC} Installing CLI tool..."
 
 # Expected CLI binary checksum (SHA256)
-CLI_EXPECTED_SHA256="bf1ccceeb0a44b4be05efda30347c46e2574afdbc1469da40cc1d9bf796c55f8"
+CLI_EXPECTED_SHA256="4da45c1824807bab6c7793ffff13022f6c78bd453bad0f5310b99a9c3c346232"
 
 # Check if CLI binary exists in current directory (Git repo)
 if [ -f "./cli/glowf1sh-license" ]; then
@@ -382,12 +310,103 @@ else
         ln -sf "$CLI_BINARY" "$CLI_SYMLINK"
         echo -e "  ${GREEN}✓${NC} Symlink created: $CLI_SYMLINK → $CLI_BINARY"
     else
-        echo -e "  ${RED}✗${NC} Failed to install CLI tool (non-critical, continuing...)"
+        echo -e "  ${RED}✗${NC} Failed to install CLI tool"
+        echo -e "  ${RED}Installation aborted - CLI tool is required for hardware ID generation${NC}"
+        exit 1
     fi
 fi
 
-# Step 5.5: Install Python dependencies
-echo -e "${YELLOW}[5.5/12]${NC} Installing Python dependencies..."
+# Step 3: Generate Hardware ID using CLI tool
+echo -e "${YELLOW}[3/13]${NC} Generating Hardware ID..."
+
+# Use CLI to get hardware ID (CPU serial + ETH MACs)
+HARDWARE_ID=$("$CLI_BINARY" hardware-id)
+
+if [ -z "$HARDWARE_ID" ]; then
+    echo -e "  ${RED}✗${NC} Failed to generate hardware ID"
+    exit 1
+fi
+
+echo -e "  ${GREEN}✓${NC} Hardware ID: [Generated and secured]"
+
+# Step 4: Generate Box ID (with recovery from license server)
+echo -e "${YELLOW}[4/13]${NC} Generating Box ID..."
+
+# Check if this hardware already has a registered box_id (Box ID Recovery)
+EXISTING_BOX_ID=""
+if command -v jq &> /dev/null && command -v curl &> /dev/null; then
+    EXISTING_BOX_ID=$(curl -s --max-time 10 -X POST https://license.gl0w.bot/api/box/lookup-by-hardware \
+      -H "Content-Type: application/json" \
+      -H "X-Client-Type: glowfish-license-client" \
+      -H "X-Client-Auth: glowfish-client-v1-production-key-2025" \
+      -H "X-Client-Version: 2.0.0" \
+      -d "{\"hardware_id\":\"$HARDWARE_ID\"}" 2>/dev/null | jq -r '.box_id // empty' 2>/dev/null)
+fi
+
+# Use existing box_id or generate new one
+if [ ! -z "$EXISTING_BOX_ID" ] && [ "$EXISTING_BOX_ID" != "null" ]; then
+    # Recovered existing box from previous installation
+    BOX_ID="$EXISTING_BOX_ID"
+    echo -e "  ${BLUE}→${NC} Box ID recovered from previous installation"
+else
+    # Generate new box ID (format: gfbox-<word>-<number>)
+    # Words: gods, planets, stars, elements, creatures, demons, angels, animals, military, space missions, pokemon (max 12 chars)
+    WORDS=(
+        "zeus" "apollo" "athena" "poseidon" "hades" "ares" "hermes" "thor" "odin" "loki" "freya" "balder"
+        "mercury" "venus" "earth" "mars" "jupiter" "saturn" "uranus" "neptune" "pluto"
+        "sirius" "vega" "altair" "rigel" "deneb" "antares" "polaris" "canopus" "procyon" "capella" "arcturus" "aldebaran"
+        "helium" "neon" "argon" "krypton" "xenon" "radon" "lithium" "carbon" "oxygen" "nitrogen" "hydrogen" "iron" "gold" "silver" "copper" "zinc"
+        "phoenix" "dragon" "unicorn" "griffin" "basilisk" "hydra" "kraken" "cerberus" "pegasus" "sphinx" "chimera" "manticore"
+        "asmodeus" "baal" "belial" "mammon" "lucifer" "moloch" "azazel" "beelzebub" "abaddon" "belphegor"
+        "gabriel" "michael" "raphael" "uriel" "azrael" "jophiel" "chamuel" "zadkiel" "haniel" "metatron"
+        "tiger" "lion" "falcon" "eagle" "wolf" "bear" "lynx" "fox" "raven" "owl" "shark" "orca" "cheetah" "panther" "puma" "leopard" "jaguar" "cougar"
+        "blackbird" "raptor" "stealth" "phantom" "viper" "cobra" "javelin" "patriot" "tomahawk" "harrier" "hornet" "warthog" "apache" "chinook"
+        "voyager" "pioneer" "galileo" "cassini" "juno" "hubble" "kepler" "curiosity" "spirit" "mariner" "viking"
+        "pikachu" "charizard" "mewtwo" "blastoise" "gengar" "dragonite" "lucario" "greninja" "rayquaza" "garchomp" "tyranitar" "salamence" "metagross" "alakazam" "machamp" "gyarados" "snorlax" "lapras" "eevee" "umbreon" "espeon" "jolteon" "flareon" "vaporeon"
+    )
+    RANDOM_WORD=${WORDS[$RANDOM % ${#WORDS[@]}]}
+    RANDOM_NUM=$((RANDOM % 1000))
+    BOX_ID=$(printf "gfbox-%s-%03d" "$RANDOM_WORD" "$RANDOM_NUM")
+fi
+
+echo -e "  ${GREEN}✓${NC} Box ID: $BOX_ID"
+
+# Step 5: Create config.json
+echo -e "${YELLOW}[5/13]${NC} Creating config.json..."
+cat > "$CONFIG_DIR/config.json" <<EOF
+{
+  "box_id": "$BOX_ID",
+  "hardware_id": "$HARDWARE_ID",
+  "license_url": "https://license.gl0w.bot/api",
+  "license_key": "",
+  "first_seen": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "installer_version": "2.0.0"
+}
+EOF
+chmod 400 "$CONFIG_DIR/config.json"
+chattr +i "$CONFIG_DIR/config.json"
+echo -e "  ${GREEN}✓${NC} config.json created (secured with immutable flag)"
+
+# Step 6: Create initial license.json
+echo -e "${YELLOW}[6/13]${NC} Creating initial license.json..."
+cat > "$CONFIG_DIR/license.json" <<EOF
+{
+  "status": "inactive",
+  "tier": "free",
+  "jwt_token": "",
+  "expires_at": "",
+  "features": [],
+  "last_validated": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "grace_period_hours": 24,
+  "config_checksum": "",
+  "license_checksum": ""
+}
+EOF
+chmod 600 "$CONFIG_DIR/license.json"
+echo -e "  ${GREEN}✓${NC} license.json created"
+
+# Step 7: Install Python dependencies
+echo -e "${YELLOW}[7/13]${NC} Installing Python dependencies..."
 if command -v pip3 &> /dev/null; then
     # Try to download requirements.txt from GitHub
     if curl -fsSL "$BASE_URL/requirements.txt" -o /tmp/requirements.txt 2>/dev/null; then
@@ -409,8 +428,8 @@ else
     echo -e "  ${YELLOW}⚠${NC}  pip3 not found, skipping Python dependencies"
 fi
 
-# Step 6: Download and install Python modules
-echo -e "${YELLOW}[6/12]${NC} Installing Python modules..."
+# Step 8: Download and install Python modules
+echo -e "${YELLOW}[8/13]${NC} Installing Python modules..."
 
 MODULES=(
     "api_server.py"
@@ -461,11 +480,8 @@ else
     echo -e "  ${YELLOW}⚠${NC}  PyArmor runtime not found (scripts may not work if obfuscated)"
 fi
 
-# Step 7: Python dependencies already installed in Step 5.5
-# (pyarmor, websocket-client, websockets, requests, flask, psutil)
-
-# Step 8: Download RIST modules
-echo -e "${YELLOW}[8/12]${NC} Installing RIST modules..."
+# Step 9: Download RIST modules
+echo -e "${YELLOW}[9/13]${NC} Installing RIST modules..."
 
 RIST_MODULES=(
     "rist_manager.py"
@@ -504,8 +520,8 @@ else
     echo -e "  ${YELLOW}⚠${NC}  RIST PyArmor runtime not found (optional)"
 fi
 
-# Step 9: Download and verify GStreamer package
-echo -e "${YELLOW}[9/12]${NC} Installing GStreamer package..."
+# Step 10: Download and verify GStreamer package
+echo -e "${YELLOW}[10/13]${NC} Installing GStreamer package..."
 echo "  Downloading GStreamer (this may take a moment)..."
 
 if curl -fsSL "$BASE_URL/gstreamer-arm64.tar.xz" -o /tmp/gstreamer-arm64.tar.xz 2>/dev/null && \
@@ -527,8 +543,8 @@ else
     echo -e "  ${YELLOW}⚠${NC}  GStreamer package not found (optional)"
 fi
 
-# Step 10: Register box with license server
-echo -e "${YELLOW}[10/12]${NC} Registering box with license server..."
+# Step 11: Register box with license server
+echo -e "${YELLOW}[11/13]${NC} Registering box with license server..."
 REGISTER_RESPONSE=$(curl -s -X POST https://license.gl0w.bot/api/box/register \
   -H "Content-Type: application/json" \
   -H "X-Client-Type: glowfish-license-client" \
@@ -542,8 +558,8 @@ else
     echo -e "  ${YELLOW}⚠${NC}  Warning: Could not register with license server (offline installation?)"
 fi
 
-# Step 11: License activation (interactive)
-echo -e "${YELLOW}[11/12]${NC} License activation..."
+# Step 12: License activation (interactive)
+echo -e "${YELLOW}[12/13]${NC} License activation..."
 
 # Only prompt if running in interactive terminal
 # Use /dev/tty to handle piped execution (curl | bash)
@@ -612,8 +628,8 @@ else
     echo -e "  ${BLUE}→${NC} You can activate your license later with: ${GREEN}glowf1sh-license activate YOUR-KEY${NC}"
 fi
 
-# Step 12: Install systemd service, timer, and scripts
-echo -e "${YELLOW}[12/12]${NC} Installing system services..."
+# Step 13: Install systemd service, timer, and scripts
+echo -e "${YELLOW}[13/13]${NC} Installing system services..."
 
 # Download and install service file
 if curl -fsSL "$BASE_URL/systemd/glowf1sh-license-validator.service" -o /etc/systemd/system/glowf1sh-license-validator.service 2>/dev/null; then
