@@ -549,7 +549,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
           -H "X-Client-Type: glowfish-license-client" \
           -H "X-Client-Auth: glowfish-client-v1-production-key-2025" \
           -H "X-Client-Version: 2.0.0" \
-          -d "{\"box_id\":\"$BOX_ID\",\"license_key\":\"$LICENSE_KEY\"}" 2>&1)
+          -d "{\"box_id\":\"$BOX_ID\",\"hardware_id\":\"$HARDWARE_ID\",\"license_key\":\"$LICENSE_KEY\"}" 2>&1)
 
         # Parse JSON response properly
         if command -v jq &> /dev/null; then
@@ -568,7 +568,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
                     mv "$CONFIG_DIR/license.json.tmp" "$CONFIG_DIR/license.json"
                 fi
             else
-                ERROR_MSG=$(echo "$ACTIVATE_RESPONSE" | jq -r '.message // "Unknown error"' 2>/dev/null)
+                ERROR_MSG=$(echo "$ACTIVATE_RESPONSE" | jq -r '.error // "Unknown error"' 2>/dev/null)
                 echo -e "  ${RED}✗${NC} License activation failed: $ERROR_MSG"
                 echo -e "  ${YELLOW}→${NC} You can activate later with: glowf1sh-license activate YOUR-KEY"
             fi
