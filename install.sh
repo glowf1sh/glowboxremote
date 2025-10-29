@@ -45,7 +45,7 @@ uninstall_glowf1sh() {
     # Check if anything is actually installed
     FOUND_COMPONENTS=0
     [ -d "$INSTALL_DIR" ] && FOUND_COMPONENTS=$((FOUND_COMPONENTS + 1))
-    [ -f "$CLI_PATH" ] && FOUND_COMPONENTS=$((FOUND_COMPONENTS + 1))
+    [ -f "$CLI_BINARY" ] && FOUND_COMPONENTS=$((FOUND_COMPONENTS + 1))
     [ -n "$(ls /etc/systemd/system/glowf1sh-*.service /etc/systemd/system/glowf1sh-*.timer 2>/dev/null)" ] && FOUND_COMPONENTS=$((FOUND_COMPONENTS + 1))
 
     if [ $FOUND_COMPONENTS -eq 0 ]; then
@@ -181,7 +181,7 @@ uninstall_glowf1sh() {
 
     echo -e "${YELLOW}[7/7]${NC} Final cleanup and verification..."
     # Verify everything is removed
-    if [ ! -d "$INSTALL_DIR" ] && [ ! -f "$CLI_PATH" ]; then
+    if [ ! -d "$INSTALL_DIR" ] && [ ! -f "$CLI_BINARY" ]; then
         echo -e "  ${GREEN}✓${NC} All components removed successfully"
     else
         echo -e "  ${YELLOW}⚠${NC}  Some components may still exist"
@@ -580,8 +580,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         else
             echo "  Activating license..."
             # Use the CLI binary for license activation
-            if [ -f "$CLI_PATH" ]; then
-                ACTIVATE_OUTPUT=$("$CLI_PATH" activate "$LICENSE_KEY" 2>&1)
+            if [ -f "$CLI_BINARY" ]; then
+                ACTIVATE_OUTPUT=$("$CLI_BINARY" activate "$LICENSE_KEY" 2>&1)
                 EXIT_CODE=$?
                 if [ $EXIT_CODE -eq 0 ]; then
                     echo -e "  ${GREEN}✓${NC} License activated successfully"
