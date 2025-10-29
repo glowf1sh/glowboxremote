@@ -42,6 +42,21 @@ uninstall_glowf1sh() {
     echo -e "${BLUE}╚═══════════════════════════════════════════════════════╝${NC}"
     echo ""
 
+    # Check if anything is actually installed
+    FOUND_COMPONENTS=0
+    [ -d "$INSTALL_DIR" ] && FOUND_COMPONENTS=$((FOUND_COMPONENTS + 1))
+    [ -f "$CLI_PATH" ] && FOUND_COMPONENTS=$((FOUND_COMPONENTS + 1))
+    [ -n "$(ls /etc/systemd/system/glowf1sh-*.service /etc/systemd/system/glowf1sh-*.timer 2>/dev/null)" ] && FOUND_COMPONENTS=$((FOUND_COMPONENTS + 1))
+
+    if [ $FOUND_COMPONENTS -eq 0 ]; then
+        echo -e "${YELLOW}⚠  Nothing to uninstall - no Glowf1sh components found${NC}"
+        echo ""
+        exit 0
+    fi
+
+    echo -e "Found ${GREEN}$FOUND_COMPONENTS${NC} component(s) to remove"
+    echo ""
+
     # Confirm uninstallation
     echo -e "${YELLOW}WARNING: This will remove all Glowf1sh components!${NC}"
     echo ""
