@@ -32,6 +32,7 @@ SCRIPTS_DIR="$INSTALL_DIR/scripts"
 CLI_DIR="$INSTALL_DIR/cli"
 CLI_BINARY="$CLI_DIR/glowf1sh-license"
 CLI_SYMLINK="/usr/bin/glowf1sh-license"
+BOX_ID_CACHE="/etc/.glowf1sh-box-id"
 
 # Uninstall function
 uninstall_glowf1sh() {
@@ -51,7 +52,7 @@ uninstall_glowf1sh() {
     if [ $FOUND_COMPONENTS -eq 0 ]; then
         echo -e "${YELLOW}⚠  Nothing to uninstall - no Glowf1sh components found${NC}"
         echo ""
-        return 0
+        exit 0
     fi
 
     echo -e "Found ${GREEN}$FOUND_COMPONENTS${NC} component(s) to remove"
@@ -329,26 +330,39 @@ fi
 
 echo -e "  ${GREEN}✓${NC} Hardware ID: [Generated and secured]"
 
-# Step 4: Generate Box ID (with recovery from license server)
+# Step 4: Generate Box ID (with recovery from local cache, then license server)
 echo -e "${YELLOW}[4/13]${NC} Generating Box ID..."
 
-# Check if this hardware already has a registered box_id (Box ID Recovery)
-EXISTING_BOX_ID=""
-if command -v jq &> /dev/null && command -v curl &> /dev/null; then
-    EXISTING_BOX_ID=$(curl -s --max-time 10 -X POST https://license.gl0w.bot/api/box/lookup-by-hardware \
-      -H "Content-Type: application/json" \
-      -H "X-Client-Type: glowfish-license-client" \
-      -H "X-Client-Auth: glowfish-client-v1-production-key-2025" \
-      -H "X-Client-Version: 2.0.0" \
-      -d "{\"hardware_id\":\"$HARDWARE_ID\"}" 2>/dev/null | jq -r '.box_id // empty' 2>/dev/null)
+BOX_ID=""
+
+# Priority 1: Check local cache file (survives uninstall/reinstall)
+if [ -f "$BOX_ID_CACHE" ]; then
+    CACHED_BOX_ID=$(cat "$BOX_ID_CACHE" 2>/dev/null | tr -d '\n\r ')
+    if [ ! -z "$CACHED_BOX_ID" ] && [[ "$CACHED_BOX_ID" =~ ^gfbox-[a-z]+-[0-9]+$ ]]; then
+        BOX_ID="$CACHED_BOX_ID"
+        echo -e "  ${BLUE}→${NC} Box ID restored from local cache (persistent)"
+    fi
 fi
 
-# Use existing box_id or generate new one
-if [ ! -z "$EXISTING_BOX_ID" ] && [ "$EXISTING_BOX_ID" != "null" ]; then
-    # Recovered existing box from previous installation
-    BOX_ID="$EXISTING_BOX_ID"
-    echo -e "  ${BLUE}→${NC} Box ID recovered from previous installation"
-else
+# Priority 2: Check if this hardware already has a registered box_id on server (Box ID Recovery)
+if [ -z "$BOX_ID" ]; then
+    if command -v jq &> /dev/null && command -v curl &> /dev/null; then
+        EXISTING_BOX_ID=$(curl -s --max-time 10 -X POST https://license.gl0w.bot/api/box/lookup-by-hardware \
+          -H "Content-Type: application/json" \
+          -H "X-Client-Type: glowfish-license-client" \
+          -H "X-Client-Auth: glowfish-client-v1-production-key-2025" \
+          -H "X-Client-Version: 2.0.0" \
+          -d "{\"hardware_id\":\"$HARDWARE_ID\"}" 2>/dev/null | jq -r '.box_id // empty' 2>/dev/null)
+
+        if [ ! -z "$EXISTING_BOX_ID" ] && [ "$EXISTING_BOX_ID" != "null" ]; then
+            BOX_ID="$EXISTING_BOX_ID"
+            echo -e "  ${BLUE}→${NC} Box ID recovered from license server"
+        fi
+    fi
+fi
+
+# Priority 3: Generate new box_id
+if [ -z "$BOX_ID" ]; then
     # Generate new box ID (format: gfbox-<word>-<number>)
     # Words: gods, planets, stars, elements, creatures, demons, angels, animals, military, space missions, pokemon (max 12 chars)
     WORDS=(
@@ -367,7 +381,12 @@ else
     RANDOM_WORD=${WORDS[$RANDOM % ${#WORDS[@]}]}
     RANDOM_NUM=$((RANDOM % 1000))
     BOX_ID=$(printf "gfbox-%s-%03d" "$RANDOM_WORD" "$RANDOM_NUM")
+    echo -e "  ${BLUE}→${NC} New Box ID generated"
 fi
+
+# Save Box ID to persistent cache (survives uninstall)
+echo "$BOX_ID" > "$BOX_ID_CACHE"
+chmod 600 "$BOX_ID_CACHE"
 
 echo -e "  ${GREEN}✓${NC} Box ID: $BOX_ID"
 
