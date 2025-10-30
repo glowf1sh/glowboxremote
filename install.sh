@@ -488,11 +488,11 @@ fi
 
 # Step 6.5: Download _core runtime for belabox-api (PyArmor)
 echo "  Installing PyArmor runtime (_core)..."
-mkdir -p "$BELABOX_API_DIR/_core"
-if curl -fsSL --max-time 30 "$BASE_URL/belabox-api/_core/__init__.py" -o "$BELABOX_API_DIR/_core/__init__.py" 2>/dev/null && \
-   curl -fsSL --max-time 60 "$BASE_URL/belabox-api/_core/_pytransform.so" -o "$BELABOX_API_DIR/_core/_pytransform.so" 2>/dev/null; then
-    chmod 500 "$BELABOX_API_DIR/_core/__init__.py"
-    chmod 500 "$BELABOX_API_DIR/_core/_pytransform.so"
+mkdir -p "$BELABOX_API_DIR/_core/pyarmor_runtime_011004"
+if curl -fsSL --max-time 30 "$BASE_URL/belabox-api/_core/pyarmor_runtime_011004/__init__.py" -o "$BELABOX_API_DIR/_core/pyarmor_runtime_011004/__init__.py" 2>/dev/null && \
+   curl -fsSL --max-time 60 "$BASE_URL/belabox-api/_core/pyarmor_runtime_011004/pyarmor_runtime.so" -o "$BELABOX_API_DIR/_core/pyarmor_runtime_011004/pyarmor_runtime.so" 2>/dev/null; then
+    chmod 500 "$BELABOX_API_DIR/_core/pyarmor_runtime_011004/__init__.py"
+    chmod 500 "$BELABOX_API_DIR/_core/pyarmor_runtime_011004/pyarmor_runtime.so"
     echo -e "  ${GREEN}✓${NC} PyArmor runtime installed for belabox-api"
 else
     echo -e "  ${YELLOW}⚠${NC}  PyArmor runtime not found (scripts may not work if obfuscated)"
@@ -528,11 +528,11 @@ fi
 
 # Step 8.5: Download _core runtime for rist (PyArmor)
 echo "  Installing PyArmor runtime for RIST (_core)..."
-mkdir -p "$RIST_DIR/_core"
-if curl -fsSL --max-time 30 "$BASE_URL/rist/_core/__init__.py" -o "$RIST_DIR/_core/__init__.py" 2>/dev/null && \
-   curl -fsSL --max-time 60 "$BASE_URL/rist/_core/_pytransform.so" -o "$RIST_DIR/_core/_pytransform.so" 2>/dev/null; then
-    chmod 500 "$RIST_DIR/_core/__init__.py"
-    chmod 500 "$RIST_DIR/_core/_pytransform.so"
+mkdir -p "$RIST_DIR/_core/pyarmor_runtime_011004"
+if curl -fsSL --max-time 30 "$BASE_URL/rist/_core/pyarmor_runtime_011004/__init__.py" -o "$RIST_DIR/_core/pyarmor_runtime_011004/__init__.py" 2>/dev/null && \
+   curl -fsSL --max-time 60 "$BASE_URL/rist/_core/pyarmor_runtime_011004/pyarmor_runtime.so" -o "$RIST_DIR/_core/pyarmor_runtime_011004/pyarmor_runtime.so" 2>/dev/null; then
+    chmod 500 "$RIST_DIR/_core/pyarmor_runtime_011004/__init__.py"
+    chmod 500 "$RIST_DIR/_core/pyarmor_runtime_011004/pyarmor_runtime.so"
     echo -e "  ${GREEN}✓${NC} PyArmor runtime installed for RIST"
 else
     echo -e "  ${YELLOW}⚠${NC}  RIST PyArmor runtime not found (optional)"
