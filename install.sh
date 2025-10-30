@@ -339,7 +339,10 @@ cat > "$CONFIG_DIR/config.json" <<EOF
   "license_url": "https://license.gl0w.bot/api",
   "license_key": "",
   "first_seen": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-  "installer_version": "2.0.0"
+  "installer_version": "2.0.0",
+  "cloud_enabled": true,
+  "cloud_api_key": "",
+  "cloud_url": "wss://cloud.gl0w.bot"
 }
 EOF
 chmod 400 "$CONFIG_DIR/config.json"
@@ -390,7 +393,10 @@ cat > "$CONFIG_DIR/config.json" <<EOF
   "license_url": "https://license.gl0w.bot/api",
   "license_key": "",
   "first_seen": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-  "installer_version": "2.0.0"
+  "installer_version": "2.0.0",
+  "cloud_enabled": true,
+  "cloud_api_key": "",
+  "cloud_url": "wss://cloud.gl0w.bot"
 }
 EOF
 chmod 400 "$CONFIG_DIR/config.json"
@@ -399,8 +405,29 @@ echo -e "  ${GREEN}✓${NC} config.json updated with Box ID"
 
 # Step 7: Register box with license server
 echo -e "${YELLOW}[7/15]${NC} Registering box with license server..."
-if "$CLI_BINARY" register 2>/dev/null; then
+REGISTER_OUTPUT=$("$CLI_BINARY" register 2>&1)
+REGISTER_EXIT=$?
+
+if [ $REGISTER_EXIT -eq 0 ]; then
+    echo "$REGISTER_OUTPUT"
     echo -e "  ${GREEN}✓${NC} Box registered successfully"
+
+    # Extract API Key from output
+    API_KEY=$(echo "$REGISTER_OUTPUT" | grep "^API Key:" | awk '{print $3}')
+
+    if [ ! -z "$API_KEY" ]; then
+        # Update config.json with API Key
+        chattr -i "$CONFIG_DIR/config.json"
+        chmod 600 "$CONFIG_DIR/config.json"
+
+        TMP_CONFIG=$(mktemp)
+        jq --arg key "$API_KEY" '.cloud_api_key = $key' "$CONFIG_DIR/config.json" > "$TMP_CONFIG"
+        mv "$TMP_CONFIG" "$CONFIG_DIR/config.json"
+
+        chmod 400 "$CONFIG_DIR/config.json"
+        chattr +i "$CONFIG_DIR/config.json"
+        echo -e "  ${GREEN}✓${NC} Cloud API key configured"
+    fi
 else
     echo -e "  ${YELLOW}⚠${NC}  Warning: Could not register with license server (offline installation?)"
 fi
