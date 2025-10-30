@@ -273,6 +273,17 @@ if ! command -v curl >/dev/null 2>&1; then
     fi
 fi
 
+# Ensure jq is installed (needed for JSON manipulation)
+if ! command -v jq >/dev/null 2>&1; then
+    echo -e "${YELLOW}⚠${NC}  jq not found, installing..."
+    if apt-get install -y jq >/dev/null 2>&1; then
+        echo -e "  ${GREEN}✓${NC} jq installed successfully"
+    else
+        echo -e "  ${RED}✗${NC} Failed to install jq - please install manually"
+        exit 1
+    fi
+fi
+
 # Step 1: Create directories
 echo -e "${YELLOW}[1/15]${NC} Creating installation directories..."
 mkdir -p "$CONFIG_DIR"
