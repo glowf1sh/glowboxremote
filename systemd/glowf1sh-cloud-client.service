@@ -1,15 +1,18 @@
 [Unit]
-Description=Glowf1sh License Validator
+Description=Glowf1sh Cloud Remote Control Client
 Documentation=https://github.com/glowf1sh/glowboxremote
-After=network-online.target
+After=network-online.target glowf1sh-api-server.service
 Wants=network-online.target
+Requires=glowf1sh-api-server.service
 
 [Service]
-Type=oneshot
-ExecStart=/usr/bin/python3 /opt/glowf1sh-remote/belabox-api/license-validator.py
+Type=simple
+ExecStart=/usr/bin/python3 /opt/glowf1sh-remote/belabox-api/cloud_client.py
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=glowf1sh-license
+SyslogIdentifier=glowf1sh-cloud
+Restart=always
+RestartSec=10
 
 # Security
 User=root
@@ -17,9 +20,6 @@ ProtectSystem=strict
 ReadWritePaths=/opt/glowf1sh-remote
 PrivateTmp=yes
 NoNewPrivileges=yes
-
-# Restart policy
-Restart=no
 
 [Install]
 WantedBy=multi-user.target

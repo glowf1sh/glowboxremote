@@ -649,6 +649,20 @@ else
     echo -e "  ${YELLOW}⚠${NC}  Timer file not found"
 fi
 
+# Download and install API server service
+if curl -fsSL "$BASE_URL/systemd/glowf1sh-api-server.service" -o /etc/systemd/system/glowf1sh-api-server.service 2>/dev/null; then
+    echo -e "  ${GREEN}✓${NC} API server service installed"
+else
+    echo -e "  ${YELLOW}⚠${NC}  API server service not found"
+fi
+
+# Download and install cloud client service
+if curl -fsSL "$BASE_URL/systemd/glowf1sh-cloud-client.service" -o /etc/systemd/system/glowf1sh-cloud-client.service 2>/dev/null; then
+    echo -e "  ${GREEN}✓${NC} Cloud client service installed"
+else
+    echo -e "  ${YELLOW}⚠${NC}  Cloud client service not found"
+fi
+
 # Download and install system scripts
 if curl -fsSL "$BASE_URL/scripts/harden-files.sh" -o "$SCRIPTS_DIR/harden-files.sh" 2>/dev/null; then
     chmod 755 "$SCRIPTS_DIR/harden-files.sh"
@@ -659,6 +673,22 @@ fi
 
 # Reload systemd and enable timer
 systemctl daemon-reload 2>/dev/null || echo -e "  ${YELLOW}⚠${NC}  systemd not available"
+
+# Enable and start the API server service (must start BEFORE cloud client)
+if systemctl enable glowf1sh-api-server.service 2>/dev/null; then
+    systemctl start glowf1sh-api-server.service 2>/dev/null
+    echo -e "  ${GREEN}✓${NC} API server service enabled and started"
+else
+    echo -e "  ${YELLOW}⚠${NC}  Could not enable API server (systemd not available?)"
+fi
+
+# Enable and start the cloud client service (depends on API server)
+if systemctl enable glowf1sh-cloud-client.service 2>/dev/null; then
+    systemctl start glowf1sh-cloud-client.service 2>/dev/null
+    echo -e "  ${GREEN}✓${NC} Cloud client service enabled and started"
+else
+    echo -e "  ${YELLOW}⚠${NC}  Could not enable cloud client (systemd not available?)"
+fi
 
 # Enable and start the license validator timer
 if systemctl enable glowf1sh-license-validator.timer 2>/dev/null; then
