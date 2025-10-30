@@ -274,7 +274,7 @@ if ! command -v curl >/dev/null 2>&1; then
 fi
 
 # Step 1: Create directories
-echo -e "${YELLOW}[1/13]${NC} Creating installation directories..."
+echo -e "${YELLOW}[1/15]${NC} Creating installation directories..."
 mkdir -p "$CONFIG_DIR"
 mkdir -p "$BELABOX_API_DIR"
 mkdir -p "$RIST_DIR"
@@ -284,8 +284,36 @@ mkdir -p "$CLI_DIR"
 mkdir -p "$INSTALL_DIR/logs"
 echo -e "  ${GREEN}✓${NC} Directories created"
 
-# Step 2: Install CLI binary from repository (MOVED UP - needed for hardware ID)
-echo -e "${YELLOW}[2/13]${NC} Installing CLI tool..."
+# Step 2: Configure Avahi (prevent belabox.local-2 issue)
+echo -e "${YELLOW}[2/15]${NC} Configuring mDNS (Avahi)..."
+
+# Check if already configured
+AVAHI_NEEDS_UPDATE=false
+grep -q "^host-name=belabox" /etc/avahi/avahi-daemon.conf 2>/dev/null || AVAHI_NEEDS_UPDATE=true
+grep -q "^use-ipv6=no" /etc/avahi/avahi-daemon.conf 2>/dev/null || AVAHI_NEEDS_UPDATE=true
+grep -q "^check-response-ttl=yes" /etc/avahi/avahi-daemon.conf 2>/dev/null || AVAHI_NEEDS_UPDATE=true
+
+if [ "$AVAHI_NEEDS_UPDATE" = true ]; then
+    # Backup original config
+    if [ -f "/etc/avahi/avahi-daemon.conf" ] && [ ! -f "/etc/avahi/avahi-daemon.conf.bak" ]; then
+        cp /etc/avahi/avahi-daemon.conf /etc/avahi/avahi-daemon.conf.bak
+    fi
+
+    # Apply anti-flapping configuration
+    sed -i 's/^#*host-name=.*/host-name=belabox/' /etc/avahi/avahi-daemon.conf
+    sed -i 's/^use-ipv6=yes/use-ipv6=no/' /etc/avahi/avahi-daemon.conf
+    sed -i 's/^#*check-response-ttl=.*/check-response-ttl=yes/' /etc/avahi/avahi-daemon.conf
+
+    # Restart avahi-daemon
+    systemctl restart avahi-daemon 2>/dev/null || true
+    echo -e "  ${GREEN}✓${NC} Avahi configured (prevents hostname conflicts)"
+else
+    echo -e "  ${GREEN}✓${NC} Avahi already configured"
+fi
+
+
+# Step 3: Install CLI binary from repository (MOVED UP - needed for hardware ID)
+echo -e "${YELLOW}[3/15]${NC} Installing CLI tool..."
 
 # Expected CLI binary checksum (SHA256)
 CLI_EXPECTED_SHA256="83b32d5ca14a74b96816227e81c35bb8ddea3f0388f2ba2d8f4ae9fac9f1f731"
@@ -352,8 +380,8 @@ else
     fi
 fi
 
-# Step 3: Generate Hardware ID using CLI tool
-echo -e "${YELLOW}[3/13]${NC} Generating Hardware ID..."
+# Step 4: Generate Hardware ID using CLI tool
+echo -e "${YELLOW}[4/15]${NC} Generating Hardware ID..."
 
 # Use CLI to get hardware ID (CPU serial + ETH MACs)
 HARDWARE_ID=$("$CLI_BINARY" hardware-id)
@@ -365,8 +393,8 @@ fi
 
 echo -e "  ${GREEN}✓${NC} Hardware ID: [Generated and secured]"
 
-# Step 4: Create temporary config.json (needed for CLI lookup-box-id)
-echo -e "${YELLOW}[4/13]${NC} Creating temporary config.json..."
+# Step 5: Create temporary config.json (needed for CLI lookup-box-id)
+echo -e "${YELLOW}[5/15]${NC} Creating temporary config.json..."
 # Remove immutable flag if exists (defensive cleanup)
 if [ -f "$CONFIG_DIR/config.json" ]; then
     chattr -i "$CONFIG_DIR/config.json" 2>/dev/null || true
@@ -388,8 +416,8 @@ chmod 400 "$CONFIG_DIR/config.json"
 chattr +i "$CONFIG_DIR/config.json"
 echo -e "  ${GREEN}✓${NC} Temporary config.json created"
 
-# Step 5: Generate Box ID (with recovery from license server via CLI)
-echo -e "${YELLOW}[5/13]${NC} Generating Box ID..."
+# Step 6: Generate Box ID (with recovery from license server via CLI)
+echo -e "${YELLOW}[6/15]${NC} Generating Box ID..."
 
 BOX_ID=""
 
@@ -422,8 +450,8 @@ fi
 
 echo -e "  ${GREEN}✓${NC} Box ID: $BOX_ID"
 
-# Step 6: Update config.json with Box ID
-echo -e "${YELLOW}[6/13]${NC} Updating config.json with Box ID..."
+# Step 7: Update config.json with Box ID
+echo -e "${YELLOW}[7/15]${NC} Updating config.json with Box ID..."
 # Remove immutable flag if exists (defensive cleanup)
 if [ -f "$CONFIG_DIR/config.json" ]; then
     chattr -i "$CONFIG_DIR/config.json" 2>/dev/null || true
@@ -445,8 +473,8 @@ chmod 400 "$CONFIG_DIR/config.json"
 chattr +i "$CONFIG_DIR/config.json"
 echo -e "  ${GREEN}✓${NC} config.json updated with Box ID"
 
-# Step 7: Register box with license server
-echo -e "${YELLOW}[7/15]${NC} Registering box with license server..."
+# Step 8: Register box with license server
+echo -e "${YELLOW}[8/15]${NC} Registering box with license server..."
 REGISTER_OUTPUT=$("$CLI_BINARY" register 2>&1)
 REGISTER_EXIT=$?
 
@@ -474,8 +502,8 @@ else
     echo -e "  ${YELLOW}⚠${NC}  Warning: Could not register with license server (offline installation?)"
 fi
 
-# Step 8: Create initial license.json
-echo -e "${YELLOW}[8/15]${NC} Creating initial license.json..."
+# Step 9: Create initial license.json
+echo -e "${YELLOW}[9/15]${NC} Creating initial license.json..."
 cat > "$CONFIG_DIR/license.json" <<EOF
 {
   "status": "inactive",
@@ -492,8 +520,8 @@ EOF
 chmod 600 "$CONFIG_DIR/license.json"
 echo -e "  ${GREEN}✓${NC} license.json created"
 
-# Step 7: Install Python dependencies
-echo -e "${YELLOW}[9/15]${NC} Installing Python dependencies..."
+# Step 10: Install Python dependencies
+echo -e "${YELLOW}[10/15]${NC} Installing Python dependencies..."
 if command -v pip3 &> /dev/null; then
     # Try to download requirements.txt from GitHub
     if curl -fsSL "$BASE_URL/requirements.txt" -o /tmp/requirements.txt 2>/dev/null; then
@@ -515,8 +543,8 @@ else
     echo -e "  ${YELLOW}⚠${NC}  pip3 not found, skipping Python dependencies"
 fi
 
-# Step 8: Download and install Python modules
-echo -e "${YELLOW}[10/15]${NC} Installing Python modules..."
+# Step 11: Download and install Python modules
+echo -e "${YELLOW}[11/15]${NC} Installing Python modules..."
 
 MODULES=(
     "api_server.py"
@@ -567,8 +595,8 @@ else
     echo -e "  ${YELLOW}⚠${NC}  PyArmor runtime not found (scripts may not work if obfuscated)"
 fi
 
-# Step 9: Download RIST modules
-echo -e "${YELLOW}[11/15]${NC} Installing RIST modules..."
+# Step 12: Download RIST modules
+echo -e "${YELLOW}[12/15]${NC} Installing RIST modules..."
 
 RIST_MODULES=(
     "rist_manager.py"
@@ -607,8 +635,8 @@ else
     echo -e "  ${YELLOW}⚠${NC}  RIST PyArmor runtime not found (optional)"
 fi
 
-# Step 10: Download and verify GStreamer package
-echo -e "${YELLOW}[12/15]${NC} Installing GStreamer package..."
+# Step 13: Download and verify GStreamer package
+echo -e "${YELLOW}[13/15]${NC} Installing GStreamer package..."
 echo "  Downloading GStreamer (this may take a moment)..."
 
 if curl -fsSL "$BASE_URL/gstreamer-arm64.tar.xz" -o /tmp/gstreamer-arm64.tar.xz 2>/dev/null && \
@@ -630,9 +658,9 @@ else
     echo -e "  ${YELLOW}⚠${NC}  GStreamer package not found (optional)"
 fi
 
-# Step 11: License activation (interactive)
+# Step 14: License activation (interactive)
 # Note: Box registration happens automatically during license activation via /api/box/activate
-echo -e "${YELLOW}[13/15]${NC} License activation..."
+echo -e "${YELLOW}[14/15]${NC} License activation..."
 
 # Only prompt if running in interactive terminal
 # Use /dev/tty to handle piped execution (curl | bash)
@@ -701,8 +729,8 @@ else
     echo -e "  ${BLUE}→${NC} You can activate your license later with: ${GREEN}glowf1sh-license activate YOUR-KEY${NC}"
 fi
 
-# Step 13: Install systemd service, timer, and scripts
-echo -e "${YELLOW}[14/15]${NC} Installing system services..."
+# Step 15: Install systemd service, timer, and scripts
+echo -e "${YELLOW}[15/15]${NC} Installing system services..."
 
 # Download and install service file
 if curl -fsSL "$BASE_URL/systemd/glowf1sh-license-validator.service" -o /etc/systemd/system/glowf1sh-license-validator.service 2>/dev/null; then
