@@ -284,6 +284,17 @@ if ! command -v jq >/dev/null 2>&1; then
     fi
 fi
 
+# Ensure pip3 is installed (needed for Python dependencies)
+if ! command -v pip3 >/dev/null 2>&1; then
+    echo -e "${YELLOW}⚠${NC}  pip3 not found, installing..."
+    if apt-get install -y python3-pip >/dev/null 2>&1; then
+        echo -e "  ${GREEN}✓${NC} pip3 installed successfully"
+    else
+        echo -e "  ${RED}✗${NC} Failed to install pip3 - please install manually"
+        exit 1
+    fi
+fi
+
 # Step 1: Create directories
 echo -e "${YELLOW}[1/15]${NC} Creating installation directories..."
 mkdir -p "$CONFIG_DIR"
@@ -533,25 +544,22 @@ echo -e "  ${GREEN}✓${NC} license.json created"
 
 # Step 10: Install Python dependencies
 echo -e "${YELLOW}[10/15]${NC} Installing Python dependencies..."
-if command -v pip3 &> /dev/null; then
-    # Try to download requirements.txt from GitHub
-    if curl -fsSL "$BASE_URL/requirements.txt" -o /tmp/requirements.txt 2>/dev/null; then
-        echo "  Installing packages from requirements.txt..."
-        if timeout 300 pip3 install -q -r /tmp/requirements.txt 2>/dev/null; then
-            echo -e "  ${GREEN}✓${NC} Python dependencies installed from requirements.txt"
-        else
-            echo -e "  ${YELLOW}⚠${NC}  requirements.txt installation failed, trying fallback..."
-            pip3 install -q websocket-client websockets requests flask psutil 2>/dev/null || true
-            echo -e "  ${GREEN}✓${NC} Python dependencies installed (fallback)"
-        fi
-        rm -f /tmp/requirements.txt
+# pip3 is guaranteed to be available (installed earlier)
+# Try to download requirements.txt from GitHub
+if curl -fsSL "$BASE_URL/requirements.txt" -o /tmp/requirements.txt 2>/dev/null; then
+    echo "  Installing packages from requirements.txt..."
+    if timeout 300 pip3 install -q -r /tmp/requirements.txt 2>/dev/null; then
+        echo -e "  ${GREEN}✓${NC} Python dependencies installed from requirements.txt"
     else
-        echo "  requirements.txt not found, installing core packages directly..."
+        echo -e "  ${YELLOW}⚠${NC}  requirements.txt installation failed, trying fallback..."
         pip3 install -q websocket-client websockets requests flask psutil 2>/dev/null || true
-        echo -e "  ${GREEN}✓${NC} Core Python packages installed"
+        echo -e "  ${GREEN}✓${NC} Python dependencies installed (fallback)"
     fi
+    rm -f /tmp/requirements.txt
 else
-    echo -e "  ${YELLOW}⚠${NC}  pip3 not found, skipping Python dependencies"
+    echo "  requirements.txt not found, installing core packages directly..."
+    pip3 install -q websocket-client websockets requests flask psutil 2>/dev/null || true
+    echo -e "  ${GREEN}✓${NC} Core Python packages installed"
 fi
 
 # Step 11: Download and install Python modules
