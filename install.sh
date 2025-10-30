@@ -238,6 +238,17 @@ fi
 echo -e "${GREEN}Starting installation...${NC}"
 echo ""
 
+# Ensure curl is installed (needed for GitHub downloads)
+if ! command -v curl >/dev/null 2>&1; then
+    echo -e "${YELLOW}⚠${NC}  curl not found, installing..."
+    if apt-get update >/dev/null 2>&1 && apt-get install -y curl >/dev/null 2>&1; then
+        echo -e "  ${GREEN}✓${NC} curl installed successfully"
+    else
+        echo -e "  ${RED}✗${NC} Failed to install curl - please install manually"
+        exit 1
+    fi
+fi
+
 # Step 1: Create directories
 echo -e "${YELLOW}[1/13]${NC} Creating installation directories..."
 mkdir -p "$CONFIG_DIR"
