@@ -238,6 +238,30 @@ fi
 echo -e "${GREEN}Starting installation...${NC}"
 echo ""
 
+# Check for existing installation
+EXISTING_COMPONENTS=0
+FOUND_CONFIG=false
+FOUND_CLI=false
+FOUND_SERVICES=false
+
+[ -f "$CONFIG_DIR/config.json" ] && EXISTING_COMPONENTS=$((EXISTING_COMPONENTS + 1)) && FOUND_CONFIG=true
+[ -f "$CLI_BINARY" ] && EXISTING_COMPONENTS=$((EXISTING_COMPONENTS + 1)) && FOUND_CLI=true
+systemctl is-active --quiet glowf1sh-api-server 2>/dev/null && EXISTING_COMPONENTS=$((EXISTING_COMPONENTS + 1)) && FOUND_SERVICES=true
+
+if [ $EXISTING_COMPONENTS -gt 0 ]; then
+    echo -e "${YELLOW}⚠  WARNING: Existing installation detected!${NC}"
+    echo ""
+    echo "Found components:"
+    $FOUND_CONFIG && echo "  - Configuration files in $CONFIG_DIR"
+    $FOUND_CLI && echo "  - CLI binary at $CLI_BINARY"
+    $FOUND_SERVICES && echo "  - Running services"
+    echo ""
+    echo -e "${YELLOW}Please uninstall first:${NC}"
+    echo "  wget -qO- https://raw.githubusercontent.com/glowf1sh/glowboxremote/main/install.sh | sudo bash -s -- --uninstall"
+    echo ""
+    exit 1
+fi
+
 # Ensure curl is installed (needed for GitHub downloads)
 if ! command -v curl >/dev/null 2>&1; then
     echo -e "${YELLOW}⚠${NC}  curl not found, installing..."
@@ -343,6 +367,10 @@ echo -e "  ${GREEN}✓${NC} Hardware ID: [Generated and secured]"
 
 # Step 4: Create temporary config.json (needed for CLI lookup-box-id)
 echo -e "${YELLOW}[4/13]${NC} Creating temporary config.json..."
+# Remove immutable flag if exists (defensive cleanup)
+if [ -f "$CONFIG_DIR/config.json" ]; then
+    chattr -i "$CONFIG_DIR/config.json" 2>/dev/null || true
+fi
 cat > "$CONFIG_DIR/config.json" <<EOF
 {
   "box_id": "",
@@ -396,7 +424,10 @@ echo -e "  ${GREEN}✓${NC} Box ID: $BOX_ID"
 
 # Step 6: Update config.json with Box ID
 echo -e "${YELLOW}[6/13]${NC} Updating config.json with Box ID..."
-chattr -i "$CONFIG_DIR/config.json"
+# Remove immutable flag if exists (defensive cleanup)
+if [ -f "$CONFIG_DIR/config.json" ]; then
+    chattr -i "$CONFIG_DIR/config.json" 2>/dev/null || true
+fi
 cat > "$CONFIG_DIR/config.json" <<EOF
 {
   "box_id": "$BOX_ID",
