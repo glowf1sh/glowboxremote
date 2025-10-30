@@ -316,7 +316,7 @@ fi
 echo -e "${YELLOW}[3/15]${NC} Installing CLI tool..."
 
 # Expected CLI binary checksum (SHA256)
-CLI_EXPECTED_SHA256="83b32d5ca14a74b96816227e81c35bb8ddea3f0388f2ba2d8f4ae9fac9f1f731"
+CLI_EXPECTED_SHA256="44621609d4d253939f194551dee38bb1400dadb814c9d3d226aed245f7cd01b0"
 
 # Check if CLI binary exists in current directory (Git repo)
 if [ -f "./cli/glowf1sh-license" ]; then
