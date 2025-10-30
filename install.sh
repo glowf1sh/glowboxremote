@@ -433,13 +433,13 @@ if command -v pip3 &> /dev/null; then
             echo -e "  ${GREEN}✓${NC} Python dependencies installed from requirements.txt"
         else
             echo -e "  ${YELLOW}⚠${NC}  requirements.txt installation failed, trying fallback..."
-            pip3 install -q pyarmor==7.7.4 websocket-client websockets requests flask psutil 2>/dev/null || true
+            pip3 install -q websocket-client websockets requests flask psutil 2>/dev/null || true
             echo -e "  ${GREEN}✓${NC} Python dependencies installed (fallback)"
         fi
         rm -f /tmp/requirements.txt
     else
         echo "  requirements.txt not found, installing core packages directly..."
-        pip3 install -q pyarmor==7.7.4 websocket-client websockets requests flask psutil 2>/dev/null || true
+        pip3 install -q websocket-client websockets requests flask psutil 2>/dev/null || true
         echo -e "  ${GREEN}✓${NC} Core Python packages installed"
     fi
 else
