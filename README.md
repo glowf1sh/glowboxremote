@@ -7,7 +7,7 @@ Remote management and licensing system for streaming boxes with RIST and SRTLA (
 Run the automated installer with a single command:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/glowf1sh/glowboxremote/main/install.sh | sudo bash
+wget -qO- https://raw.githubusercontent.com/glowf1sh/glowboxremote/main/install.sh | sudo bash
 ```
 
 **Requirements:**
@@ -30,7 +30,7 @@ During installation, you can provide your license key when prompted. If you don'
 To completely remove the Glowf1sh Remote Control system from your device:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/glowf1sh/glowboxremote/main/install.sh | sudo bash -s -- --uninstall
+wget -qO- https://raw.githubusercontent.com/glowf1sh/glowboxremote/main/install.sh | sudo bash -s -- --uninstall
 ```
 
 The uninstaller will:
