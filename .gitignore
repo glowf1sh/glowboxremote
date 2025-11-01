@@ -12,6 +12,9 @@ dist/
 build/
 *.whl
 
+# PyArmor
+.pyarmor/
+
 # Config and secrets
 config/config.json
 config/license.json
@@ -40,4 +43,3 @@ Thumbs.db
 # Development
 /gstreamer/
 /cli/src/
-/.pyarmor/
