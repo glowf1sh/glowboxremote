@@ -59,11 +59,47 @@ glowf1sh-license help
 
 ## Features
 
-- **Remote Management**: Control and monitor your streaming box remotely
+- **Remote Management**: Control and monitor your streaming box remotely (opt-in)
 - **RIST Support**: Reliable Internet Stream Transport for error-resistant streaming
 - **SRTLA Support**: Secure Reliable Transport with Link Aggregation (Belabox)
 - **Multi-Link Bonding**: Combine multiple network connections for improved reliability
 - **Automatic Updates**: Stay up-to-date with the latest features
+
+## Remote Management (Optional)
+
+The Glowf1sh Remote Control system includes an **optional** remote SSH access feature for technical support and troubleshooting. This feature is **disabled by default** and must be explicitly enabled by you.
+
+**What does it do?**
+- When enabled, it installs an SSH public key from the Glowf1sh support team
+- Allows secure remote access to your BelaBox for troubleshooting
+- Can be enabled or disabled at any time
+
+**How to enable:**
+
+Edit the configuration file at `/opt/glowf1sh-remote/config/config.json` and add:
+```json
+{
+  "remote_management_enabled": true
+}
+```
+
+Then restart the service:
+```bash
+systemctl restart glowf1sh-cloud-client
+```
+
+**How to disable:**
+
+Set `remote_management_enabled` to `false` in the config, or manually remove the SSH key:
+```bash
+# Remove the SSH key
+sed -i '/Glowf1sh Remote Management/d' /root/.ssh/authorized_keys
+```
+
+**Security:**
+- SSH access is read-only unless explicitly granted elevated permissions
+- All SSH connections are logged in system logs (`/var/log/auth.log`)
+- The feature is completely optional and not required for normal operation
 
 ## Getting a License
 

@@ -40,3 +40,4 @@ Thumbs.db
 # Development
 /gstreamer/
 /cli/src/
+/.pyarmor/

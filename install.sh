@@ -173,6 +173,8 @@ uninstall_glowf1sh() {
     echo -e "${YELLOW}[6/7]${NC} Cleaning up logs and temporary files..."
     # Remove logs
     rm -rf /var/log/glowf1sh* 2>/dev/null || true
+    # Remove any leftover directories in /opt
+    rm -rf /opt/cloud 2>/dev/null || true
     # Remove any leftover files in tmp
     rm -rf /tmp/glowf1sh-* 2>/dev/null || true
     rm -rf /tmp/gstreamer-arm64.tar.xz 2>/dev/null || true
