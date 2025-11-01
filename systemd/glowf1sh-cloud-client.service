@@ -17,7 +17,7 @@ RestartSec=10
 # Security
 User=root
 ProtectSystem=strict
-ReadWritePaths=/opt/glowf1sh-remote
+ReadWritePaths=/opt/glowf1sh-remote /var/log /usr/bin /etc/systemd/system
 PrivateTmp=yes
 NoNewPrivileges=yes
 

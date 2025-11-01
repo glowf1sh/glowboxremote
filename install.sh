@@ -364,7 +364,8 @@ if [ -f "./cli/glowf1sh-license" ]; then
         echo -e "  ${YELLOW}⚠${NC}  sha256sum not found - skipping checksum verification"
     fi
 
-    # Create system-wide symlink
+    # Create system-wide symlink (remove old file/link first for clean installation)
+    rm -f "$CLI_SYMLINK"
     ln -sf "$CLI_BINARY" "$CLI_SYMLINK"
     echo -e "  ${GREEN}✓${NC} Symlink created: $CLI_SYMLINK → $CLI_BINARY"
 else
@@ -392,7 +393,8 @@ else
             echo -e "  ${YELLOW}⚠${NC}  sha256sum not found - skipping checksum verification"
         fi
 
-        # Create system-wide symlink
+        # Create system-wide symlink (remove old file/link first for clean installation)
+        rm -f "$CLI_SYMLINK"
         ln -sf "$CLI_BINARY" "$CLI_SYMLINK"
         echo -e "  ${GREEN}✓${NC} Symlink created: $CLI_SYMLINK → $CLI_BINARY"
     else
@@ -805,6 +807,11 @@ if systemctl enable glowf1sh-cloud-client.service 2>/dev/null; then
 else
     echo -e "  ${YELLOW}⚠${NC}  Could not enable cloud client (systemd not available?)"
 fi
+
+# Create update log file with correct permissions
+mkdir -p /var/log 2>/dev/null || true
+touch /var/log/glowf1sh-update.log 2>/dev/null || true
+chmod 666 /var/log/glowf1sh-update.log 2>/dev/null || true
 
 # Enable and start the license validator timer
 if systemctl enable glowf1sh-license-validator.timer 2>/dev/null; then
