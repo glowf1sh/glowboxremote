@@ -339,8 +339,8 @@ fi
 # Step 3: Install CLI binary from repository (MOVED UP - needed for hardware ID)
 echo -e "${YELLOW}[3/15]${NC} Installing CLI tool..."
 
-# Expected CLI binary checksum (SHA256)
-CLI_EXPECTED_SHA256="709288bde126d36168ba852742f3616c309984d58792d9a46a288a46b9dd458e"
+# Expected CLI binary checksum (SHA256) - v1.0.2
+CLI_EXPECTED_SHA256="b2f513b4a0f315f83ecdb763c9677709744073cf09fc24bb7ac383092add099a"
 
 # Check if CLI binary exists in current directory (Git repo)
 if [ -f "./cli/glowf1sh-license" ]; then

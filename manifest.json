@@ -1,17 +1,17 @@
 {
-  "manifest_version": "1.0.1",
-  "last_updated": "2025-11-02T03:02:05Z",
+  "manifest_version": "1.0.0",
+  "last_updated": "2025-11-02T03:59:20Z",
   "files": {
     "belabox-api/api_server.py": {
-      "version": "1.0.1",
-      "sha256": "6031b1874f647c375396b5220a2a64045be1f0ed9b5dbf7d08080eeb23d21c5d",
-      "size": 60489,
+      "version": "1.0.0",
+      "sha256": "dc7a65b3d9bebeaeacefb82b9fb4fa016d920eff38de9ed384e829fc4bab2cb5",
+      "size": 60427,
       "mode": "0755"
     },
     "belabox-api/update_handler.py": {
-      "version": "1.0.1",
-      "sha256": "99bad9bb9d79ae21e967567f2033565946079fce9c3242a8b439a06e2274152c",
-      "size": 55593,
+      "version": "1.0.0",
+      "sha256": "dca981ec0931731ef44766f15b2b905272bebe8e9df0341009e7fa0c7805ad79",
+      "size": 55918,
       "mode": "0755",
       "restart_services": [
         "glowf1sh-cloud-client"
@@ -19,9 +19,9 @@
       "description": "Update execution with rollback support"
     },
     "belabox-api/manifest_handler.py": {
-      "version": "1.0.1",
-      "sha256": "b3387314cf6aba824a74af311272b1a601dde5ee72b41317bb7c2dcdc706931e",
-      "size": 30811,
+      "version": "1.0.0",
+      "sha256": "46d7d4383e36b5dcc9f27ceed1db7b033eeb16fbe9831b5ad5c684533941800f",
+      "size": 30633,
       "mode": "0644",
       "restart_services": [
         "glowf1sh-cloud-client"
@@ -29,15 +29,15 @@
       "description": "Manifest and integrity management"
     },
     "belabox-api/license-validator.py": {
-      "version": "1.0.1",
-      "sha256": "b8f09a32d7c23217d5f0b09722444a40e87e03ac0de0f46a6d4df09685800ad2",
-      "size": 21666,
+      "version": "1.0.0",
+      "sha256": "7df8d4ce9a543aa4b94496893918682f3dac4cf06b3b553b22849cbac44b75aa",
+      "size": 21950,
       "mode": "0644"
     },
     "belabox-api/cloud_client.py": {
-      "version": "1.0.1",
-      "sha256": "b49313f844567c5daf81c82f0984f5eda3c77bd7a35be21e943bb1701970416f",
-      "size": 87800,
+      "version": "1.0.0",
+      "sha256": "e64e672f364b190fac8ea8a62632cc0ab1c24396854899d64ca66b3bf1257180",
+      "size": 87647,
       "mode": "0755",
       "restart_services": [
         "glowf1sh-cloud-client"
@@ -45,69 +45,69 @@
       "description": "WebSocket client with 250MB transfer limit"
     },
     "belabox-api/__init__.py": {
-      "version": "1.0.1",
-      "sha256": "1a104269575caddb7f30f38d48b228589ad725d6ef2a7ac4e1c099b54d5fe706",
-      "size": 712,
+      "version": "1.0.0",
+      "sha256": "3d27bb7de26c8158076769605a060d83865504822448486089c1f36e37a9b1f1",
+      "size": 729,
       "mode": "0644"
     },
     "belabox-api/belabox_client.py": {
-      "version": "1.0.1",
-      "sha256": "300290eee3de45a811777072d7912d4b61dcc051484a36fec657f40d878f6bcc",
-      "size": 82834,
+      "version": "1.0.0",
+      "sha256": "a3429479be746615f12521d47af2b819ccbe4069aea9471f70dac794bbcfcd21",
+      "size": 82601,
       "mode": "0755"
     },
     "belabox-api/_core/pyarmor_runtime_011004/__init__.py": {
-      "version": "1.0.1",
-      "sha256": "e926f08fed9360146389105f84d1cb68944059af6dc5e241c8e9ea19a00ae10b",
+      "version": "1.0.0",
+      "sha256": "7171262e1135ae0809709f6a66d44f7c4619ed0200e3206c7a67283a441647d3",
       "size": 99,
       "mode": "0644"
     },
     "cli/glowf1sh-license": {
-      "version": "1.0.1",
-      "sha256": "709288bde126d36168ba852742f3616c309984d58792d9a46a288a46b9dd458e",
+      "version": "1.0.0",
+      "sha256": "b2f513b4a0f315f83ecdb763c9677709744073cf09fc24bb7ac383092add099a",
       "size": 4980736,
       "mode": "0755",
       "description": "License validation tool"
     },
     "rist/rist_profiles.py": {
-      "version": "1.0.1",
-      "sha256": "2b250180a560ea57b700dd78650eff4a75987f2be8627afc43a920395422674c",
-      "size": 36836,
+      "version": "1.0.0",
+      "sha256": "82cc5349795f3ae3a97c73be927a7a20f6e0270016b8f82fd2c82e3973e6e295",
+      "size": 37130,
       "mode": "0644",
       "restart_services": [
         "rist-relay"
       ]
     },
     "rist/license_client.py": {
-      "version": "1.0.1",
-      "sha256": "71e4755c8c5e7d09d68dfe363a7e10a17f6da672a5f0ab65d84bc45967e9f6d1",
-      "size": 48358,
+      "version": "1.0.0",
+      "sha256": "79022d047a6bcd27081f2c8ebd421d42414f702562e55a599b6e81296ec11d62",
+      "size": 48307,
       "mode": "0644",
       "restart_services": [
         "rist-relay"
       ]
     },
     "rist/adaptive_controller.py": {
-      "version": "1.0.1",
-      "sha256": "751608fb805fb964293e97760049caa85b2ad7370c275714a57d82fa0ca2179a",
-      "size": 56442,
+      "version": "1.0.0",
+      "sha256": "8603846f6730b0393dcd15de57bb43b36321b4396e94849bfc1521209da26b59",
+      "size": 56474,
       "mode": "0644",
       "restart_services": [
         "rist-relay"
       ]
     },
     "rist/rist_manager.py": {
-      "version": "1.0.1",
-      "sha256": "a327ec5129c161c16b9ee4f6821d889b9954638ec21eed41f962772e6adae421",
-      "size": 56147,
+      "version": "1.0.0",
+      "sha256": "7971b8de8154de4ce93ddb291ed75a029e01a36d608089735f7e7f7e054845fa",
+      "size": 56137,
       "mode": "0644",
       "restart_services": [
         "rist-relay"
       ]
     },
     "rist/_core/pyarmor_runtime_011004/pyarmor_runtime.so": {
-      "version": "1.0.1",
-      "sha256": "31486f8c220d0f5455dfae6c91afc66e1dd9a0fd957a840329d0e735b08d579e",
+      "version": "1.0.0",
+      "sha256": "6214b92041745d9c8942d72daab6061fe5d1f1ced6045f52755bf65e4b67c64e",
       "size": 616056,
       "mode": "0755",
       "restart_services": [
@@ -115,8 +115,8 @@
       ]
     },
     "rist/_core/pyarmor_runtime_011004/__init__.py": {
-      "version": "1.0.1",
-      "sha256": "7f29c79ecccc2aeaec2afccb07e2261f3da0863eedb5ed8b6e0a4665cb507a5c",
+      "version": "1.0.0",
+      "sha256": "33e8a96e416165dcbd3d1fc987c0fb1ba56fb29c400d8a399cc6a8a4bea7108d",
       "size": 99,
       "mode": "0644",
       "restart_services": [
@@ -124,25 +124,25 @@
       ]
     },
     "systemd/glowf1sh-api-server.service": {
-      "version": "1.0.1",
+      "version": "1.0.0",
       "sha256": "3f3cbcb69b5f5cf9b6e027bb88a9e3d404cb61993b65fcac1d5a9b97d6b7615a",
       "size": 517,
       "mode": "0644"
     },
     "systemd/glowf1sh-cloud-client.service": {
-      "version": "1.0.1",
+      "version": "1.0.0",
       "sha256": "b811ba1fdfb04478c105ac5ed103a10b6d50930d4247f778921823ac8dbc7677",
       "size": 628,
       "mode": "0644"
     },
     "systemd/glowf1sh-license-validator.timer": {
-      "version": "1.0.1",
+      "version": "1.0.0",
       "sha256": "087f046885e4953730f61c04ed0858406f4114d235848392fc4bfa75ec3bf03c",
       "size": 469,
       "mode": "0644"
     },
     "systemd/glowf1sh-license-validator.service": {
-      "version": "1.0.1",
+      "version": "1.0.0",
       "sha256": "b1544f075c11c5418c8f150c35120027bacd806a77d08b20698a561da6c4bd64",
       "size": 523,
       "mode": "0644"
