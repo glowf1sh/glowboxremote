@@ -1,23 +1,17 @@
 {
   "manifest_version": "1.0.1",
-  "last_updated": "2025-11-02T13:23:34Z",
+  "last_updated": "2025-11-02T14:31:17Z",
   "files": {
-    "install.sh": {
-      "version": "1.0.0",
-      "sha256": "d4287cb2b97a1a555a06f20067bfd2fd698c63d3ba5082f1bda776cb54e10d0d",
-      "size": 39114,
-      "mode": "0755"
-    },
     "belabox-api/api_server.py": {
       "version": "1.0.0",
-      "sha256": "affcd9494a4c39f9e5792e5dda6a89eb233e61a309c75d4b1b1a99a94e673ef1",
-      "size": 60532,
+      "sha256": "5e743998842ba5c055af3220f53ec3948e00b850445aea37c046d415a2b785ab",
+      "size": 60068,
       "mode": "0755"
     },
     "belabox-api/update_handler.py": {
       "version": "1.0.0",
-      "sha256": "3f0f18f8a1a885a94ed77ca823cbad99f77ef80d8eea0ef1e4bdd9c3704f6776",
-      "size": 55771,
+      "sha256": "9b20c9fd32557d2c830c6be9dcb499fae9499f34409c0d6cd81305546efeb751",
+      "size": 55198,
       "mode": "0755",
       "restart_services": [
         "glowf1sh-cloud-client"
@@ -26,8 +20,8 @@
     },
     "belabox-api/manifest_handler.py": {
       "version": "1.0.0",
-      "sha256": "be89f157cd50bb510df6fd71133506f930c3351c054d9dbd2305e206f9f35ba3",
-      "size": 54321,
+      "sha256": "d876f71646d5c854742576c9fd879f00fd47fbdd8b72a9612e245417f624c3ee",
+      "size": 53890,
       "mode": "0644",
       "restart_services": [
         "glowf1sh-cloud-client"
@@ -36,14 +30,14 @@
     },
     "belabox-api/license-validator.py": {
       "version": "1.0.0",
-      "sha256": "ef909abf41a437785ab4489e2d3502cc54bdc038d41e348b4aaf88c2c8ced12b",
-      "size": 21678,
+      "sha256": "34a2e784e408d4faaa297ec64242fd5dd50e8b2d5c9026381c59cdacff64f4db",
+      "size": 21618,
       "mode": "0644"
     },
     "belabox-api/cloud_client.py": {
       "version": "1.0.0",
-      "sha256": "3a98d051b1a78a06e51a7d985ec12c927f07fdc95778731ea65a0d9c42a38d7d",
-      "size": 93663,
+      "sha256": "a3bb20149874b8d7864eb28aadf587f0bf0aecb191c8fe503935cd22b7ec8814",
+      "size": 92900,
       "mode": "0755",
       "restart_services": [
         "glowf1sh-cloud-client"
@@ -52,19 +46,19 @@
     },
     "belabox-api/__init__.py": {
       "version": "1.0.0",
-      "sha256": "1462fc27e98a0f580c14b0114f1b1949f9c8239e7cb97b5a672b2756a238b77e",
-      "size": 707,
+      "sha256": "4c709ec6eaa73718539e44b58b83313ac5a18a356248f473a2bb83a6a6751c78",
+      "size": 731,
       "mode": "0644"
     },
     "belabox-api/belabox_client.py": {
       "version": "1.0.0",
-      "sha256": "7cdfe50bdf51f1e01afdd411a72c817de3324eae05f94700bd3f88c0e1de03c5",
-      "size": 82964,
+      "sha256": "3c1af0383448eedd5f82ddcb59917b15458ae1ca25b9919cd97278b065f77a27",
+      "size": 82555,
       "mode": "0755"
     },
     "belabox-api/_core/pyarmor_runtime_011004/__init__.py": {
       "version": "1.0.0",
-      "sha256": "56ff88af4fdbb86206f475c4958acc2f4fb838e7041da8d085e910067da1ef21",
+      "sha256": "ea454d78cf9efc9881d629261a8ff89cf8d3dbf14f655f62214620342802aa68",
       "size": 99,
       "mode": "0644"
     },
@@ -83,8 +77,8 @@
     },
     "rist/rist_profiles.py": {
       "version": "1.0.0",
-      "sha256": "31d0b110f7f49c6d9a6bd66581051ef44d909d7b3e5708b40246e5ff2644fd39",
-      "size": 36867,
+      "sha256": "85fcc6852a59daae12a453a4afb4123ec5bbdceba36c16f8a4b5387dc605e1e0",
+      "size": 36906,
       "mode": "0644",
       "restart_services": [
         "rist-relay"
@@ -92,8 +86,8 @@
     },
     "rist/license_client.py": {
       "version": "1.0.0",
-      "sha256": "63aa47370f43851418af378d6b609e0279721b58860edf4298ef0fc75cf87e40",
-      "size": 48481,
+      "sha256": "b8fac3750a0f2ff10aca7063bcf1f32fb55ad000a17b34e7079e3ed470c3c373",
+      "size": 48414,
       "mode": "0644",
       "restart_services": [
         "rist-relay"
@@ -101,8 +95,8 @@
     },
     "rist/adaptive_controller.py": {
       "version": "1.0.0",
-      "sha256": "508dccad2746a0b2b4820ae9c818af64585c79602db70e64916a4cd53c54acd5",
-      "size": 56359,
+      "sha256": "46e81fb87002a4b5bd319c4f9c373cd4fd0dd8109bfbd93f0c9a847a4cdb1de8",
+      "size": 56179,
       "mode": "0644",
       "restart_services": [
         "rist-relay"
@@ -110,8 +104,8 @@
     },
     "rist/rist_manager.py": {
       "version": "1.0.0",
-      "sha256": "029d1bec981533dc8fbb8b17f6852da890f579448c677806d1a82ab0e3105e10",
-      "size": 56304,
+      "sha256": "53fe1e41e1f052190edf1ce2db7d2b3c9cd0b40b823090f7ac22855b75e6c8f3",
+      "size": 56173,
       "mode": "0644",
       "restart_services": [
         "rist-relay"
@@ -119,7 +113,7 @@
     },
     "rist/_core/pyarmor_runtime_011004/pyarmor_runtime.so": {
       "version": "1.0.0",
-      "sha256": "313f9f2d383517f9816d0ce63119079ca8f907806a2ba6db10c838b5151db30c",
+      "sha256": "358913ce0813aad4543ee0c54566cb2ce81d085cdeb2304ce5fe2e52a99f3884",
       "size": 616056,
       "mode": "0755",
       "restart_services": [
@@ -128,36 +122,12 @@
     },
     "rist/_core/pyarmor_runtime_011004/__init__.py": {
       "version": "1.0.0",
-      "sha256": "c874dca90cfac7e715dd350310465f1caf0947d42637a6e95e4672cd07726743",
+      "sha256": "af5453a34f77855d076513a0881b7378f571cffcc2e24ceb76dbfed71d01c1a2",
       "size": 99,
       "mode": "0644",
       "restart_services": [
         "rist-relay"
       ]
-    },
-    "systemd/glowf1sh-api-server.service": {
-      "version": "1.0.0",
-      "sha256": "3f3cbcb69b5f5cf9b6e027bb88a9e3d404cb61993b65fcac1d5a9b97d6b7615a",
-      "size": 517,
-      "mode": "0644"
-    },
-    "systemd/glowf1sh-cloud-client.service": {
-      "version": "1.0.0",
-      "sha256": "b811ba1fdfb04478c105ac5ed103a10b6d50930d4247f778921823ac8dbc7677",
-      "size": 628,
-      "mode": "0644"
-    },
-    "systemd/glowf1sh-license-validator.timer": {
-      "version": "1.0.0",
-      "sha256": "087f046885e4953730f61c04ed0858406f4114d235848392fc4bfa75ec3bf03c",
-      "size": 469,
-      "mode": "0644"
-    },
-    "systemd/glowf1sh-license-validator.service": {
-      "version": "1.0.0",
-      "sha256": "b1544f075c11c5418c8f150c35120027bacd806a77d08b20698a561da6c4bd64",
-      "size": 523,
-      "mode": "0644"
     }
   }
 }
