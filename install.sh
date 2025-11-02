@@ -570,6 +570,7 @@ fi
 echo -e "${YELLOW}[11/15]${NC} Installing Python modules..."
 
 MODULES=(
+    "__init__.py"
     "api_server.py"
     "belabox_client.py"
     "cloud_client.py"
@@ -578,9 +579,19 @@ MODULES=(
     "manifest_handler.py"
 )
 
+# Critical modules that MUST be installed
+CRITICAL_MODULES=(
+    "__init__.py"
+    "cloud_client.py"
+    "manifest_handler.py"
+)
+
 INSTALLED_COUNT=0
+FAILED_MODULES=()
 for module in "${MODULES[@]}"; do
     echo "  Downloading $module..."
+    MODULE_INSTALLED=false
+
     # Try obfuscated version first (from GitHub workflow) - DISABLED
     # if curl -fsSL "$BASE_URL/obfuscated/$module" -o "$BELABOX_API_DIR/$module" 2>/dev/null; then
     #     chmod 500 "$BELABOX_API_DIR/$module"
@@ -589,6 +600,7 @@ for module in "${MODULES[@]}"; do
     if curl -fsSL --max-time 30 "$BASE_URL/belabox-api/$module" -o "$BELABOX_API_DIR/$module" 2>/dev/null; then
         chmod 500 "$BELABOX_API_DIR/$module"
         INSTALLED_COUNT=$((INSTALLED_COUNT + 1))
+        MODULE_INSTALLED=true
         echo "    ✓ $module"
     else
         echo "    ✗ Failed to download $module (will retry...)"
@@ -596,15 +608,49 @@ for module in "${MODULES[@]}"; do
         if curl -fsSL --max-time 30 "$BASE_URL/belabox-api/$module" -o "$BELABOX_API_DIR/$module" 2>/dev/null; then
             chmod 500 "$BELABOX_API_DIR/$module"
             INSTALLED_COUNT=$((INSTALLED_COUNT + 1))
+            MODULE_INSTALLED=true
             echo "    ✓ $module (retry successful)"
+        else
+            echo "    ✗ $module download failed after retry"
+            FAILED_MODULES+=("$module")
         fi
     fi
 done
 
+# Check for critical modules
+echo ""
+echo "Validating critical modules..."
+CRITICAL_FAILED=()
+for critical in "${CRITICAL_MODULES[@]}"; do
+    if [ ! -f "$BELABOX_API_DIR/$critical" ]; then
+        echo "  ✗ CRITICAL: $critical is missing!"
+        CRITICAL_FAILED+=("$critical")
+    else
+        echo "  ✓ $critical present"
+    fi
+done
+
+if [ ${#CRITICAL_FAILED[@]} -gt 0 ]; then
+    echo ""
+    echo -e "${RED}ERROR: Critical modules failed to install:${NC}"
+    for failed in "${CRITICAL_FAILED[@]}"; do
+        echo "  - $failed"
+    done
+    echo ""
+    echo "Installation cannot continue without these modules."
+    echo "Please check your internet connection and GitHub repository:"
+    echo "  $BASE_URL/belabox-api/"
+    exit 1
+fi
+
 if [ $INSTALLED_COUNT -gt 0 ]; then
     echo -e "  ${GREEN}✓${NC} Installed $INSTALLED_COUNT/${#MODULES[@]} Python modules"
+    if [ ${#FAILED_MODULES[@]} -gt 0 ]; then
+        echo -e "  ${YELLOW}⚠${NC}  Failed (non-critical): ${FAILED_MODULES[*]}"
+    fi
 else
-    echo -e "  ${YELLOW}⚠${NC}  No modules found (may need manual deployment)"
+    echo -e "  ${RED}✗${NC} No modules could be downloaded"
+    exit 1
 fi
 
 # Step 6.5: Download _core runtime for belabox-api (PyArmor)
