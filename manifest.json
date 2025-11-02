@@ -1,6 +1,6 @@
 {
-  "manifest_version": "1.0.2",
-  "last_updated": "2025-11-02T15:51:35Z",
+  "manifest_version": "1.0.3",
+  "last_updated": "2025-11-02T16:16:43Z",
   "files": {
     "belabox-api/api_server.py": {
       "version": "1.0.1",
@@ -69,7 +69,7 @@
       "mode": "0755"
     },
     "cli/glowf1sh-license": {
-      "version": "1.0.1",
+      "version": "1.0.3",
       "sha256": "9310313395c8b92b46f55d900ee6e238eb70d4f927e20ad57abed24c56434c72",
       "size": 4980736,
       "mode": "0755",
