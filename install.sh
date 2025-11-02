@@ -783,14 +783,6 @@ else
     echo -e "  ${YELLOW}⚠${NC}  Cloud client service not found"
 fi
 
-# Download and install system scripts
-if curl -fsSL "$BASE_URL/scripts/harden-files.sh" -o "$SCRIPTS_DIR/harden-files.sh" 2>/dev/null; then
-    chmod 755 "$SCRIPTS_DIR/harden-files.sh"
-    echo -e "  ${GREEN}✓${NC} System scripts installed"
-else
-    echo -e "  ${YELLOW}⚠${NC}  System scripts not found"
-fi
-
 # Reload systemd and enable timer
 systemctl daemon-reload 2>/dev/null || echo -e "  ${YELLOW}⚠${NC}  systemd not available"
 
