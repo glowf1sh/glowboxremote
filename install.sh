@@ -575,6 +575,7 @@ MODULES=(
     "cloud_client.py"
     "update_handler.py"
     "license-validator.py"
+    "manifest_handler.py"
 )
 
 INSTALLED_COUNT=0
