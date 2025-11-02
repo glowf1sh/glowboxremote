@@ -146,9 +146,23 @@ echo "RIST Runtime:"
 add_file_to_manifest "$BASE_DIR/rist/_core/pyarmor_runtime_011004/__init__.py" "rist/_core/pyarmor_runtime_011004/__init__.py" "Runtime module"
 add_file_to_manifest "$BASE_DIR/rist/_core/pyarmor_runtime_011004/pyarmor_runtime.so" "rist/_core/pyarmor_runtime_011004/pyarmor_runtime.so" "Runtime library"
 
-# Note: Systemd services are NOT included in manifest
-# They are managed by the system package manager and installer
-# and live in /etc/systemd/system/, not in the installation directory
+# Systemd Services
+echo ""
+echo "Systemd Services:"
+add_file_to_manifest "/etc/systemd/system/glowf1sh-api-server.service" "systemd/glowf1sh-api-server.service" "API Server Service"
+add_file_to_manifest "/etc/systemd/system/glowf1sh-cloud-client.service" "systemd/glowf1sh-cloud-client.service" "Cloud Client Service"
+add_file_to_manifest "/etc/systemd/system/glowf1sh-license-validator.service" "systemd/glowf1sh-license-validator.service" "License Validator Service"
+add_file_to_manifest "/etc/systemd/system/glowf1sh-license-validator.timer" "systemd/glowf1sh-license-validator.timer" "License Validator Timer"
+
+# Installer Script
+echo ""
+echo "Installer:"
+add_file_to_manifest "$BASE_DIR/install.sh" "install.sh" "Installation script"
+
+# Scripts
+echo ""
+echo "Scripts:"
+add_file_to_manifest "$BASE_DIR/scripts/generate_local_manifest.sh" "scripts/generate_local_manifest.sh" "Manifest generator script"
 
 # Permissions setzen
 chmod 644 "$MANIFEST_FILE"
