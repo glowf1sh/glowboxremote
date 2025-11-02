@@ -659,7 +659,7 @@ else
 fi
 
 # Step 13: Download and verify GStreamer package
-echo -e "${YELLOW}[13/15]${NC} Installing GStreamer package..."
+echo -e "${YELLOW}[13/16]${NC} Installing GStreamer package..."
 echo "  Downloading GStreamer (this may take a moment)..."
 
 if curl -fsSL "$BASE_URL/gstreamer-arm64.tar.xz" -o /tmp/gstreamer-arm64.tar.xz 2>/dev/null && \
@@ -683,7 +683,7 @@ fi
 
 # Step 14: License activation (interactive)
 # Note: Box registration happens automatically during license activation via /api/box/activate
-echo -e "${YELLOW}[14/15]${NC} License activation..."
+echo -e "${YELLOW}[14/16]${NC} License activation..."
 
 # Only prompt if running in interactive terminal
 # Use /dev/tty to handle piped execution (curl | bash)
@@ -753,7 +753,7 @@ else
 fi
 
 # Step 15: Install systemd service, timer, and scripts
-echo -e "${YELLOW}[15/15]${NC} Installing system services..."
+echo -e "${YELLOW}[15/16]${NC} Installing system services..."
 
 # Download and install service file
 if curl -fsSL "$BASE_URL/systemd/glowf1sh-license-validator.service" -o /etc/systemd/system/glowf1sh-license-validator.service 2>/dev/null; then
@@ -832,6 +832,21 @@ chmod 600 "$CONFIG_DIR/license.json" 2>/dev/null || true
 chmod 700 "$CONFIG_DIR" 2>/dev/null || true
 # Restore immutable flag for config.json
 chattr +i "$CONFIG_DIR/config.json" 2>/dev/null || true
+
+# Install manifest for package tracking
+echo -e "${YELLOW}[16/16]${NC} Installing package manifest..."
+if [ -f "./manifest.json" ]; then
+    mkdir -p "$CONFIG_DIR"
+    cp "./manifest.json" "$CONFIG_DIR/manifest.json"
+    chmod 644 "$CONFIG_DIR/manifest.json"
+    # Add installation timestamp
+    INSTALL_TIMESTAMP=$(date -Iseconds)
+    echo "{\"installed_at\": \"$INSTALL_TIMESTAMP\"}" > "$CONFIG_DIR/install_info.json"
+    chmod 644 "$CONFIG_DIR/install_info.json"
+    echo -e "  ${GREEN}✓${NC} Package manifest installed"
+else
+    echo -e "  ${YELLOW}⚠${NC}  Manifest not found (continuing without package tracking)"
+fi
 
 # Installation complete
 echo ""
