@@ -1,0 +1,94 @@
+{
+  "manifest_version": "1.0.1",
+  "last_updated": "2025-11-01T05:00:00Z",
+  "system_requirements": {
+    "python": ">=3.9",
+    "systemd": true,
+    "min_disk_space_mb": 500
+  },
+  "files": {
+    "belabox-api/api_server.py": {
+      "version": "3.0.0",
+      "sha256": "",
+      "size": 0,
+      "mode": "0500",
+      "description": "API server for local belabox interface",
+      "restart_services": ["glowf1sh-api-server"]
+    },
+    "belabox-api/belabox_client.py": {
+      "version": "3.0.0",
+      "sha256": "",
+      "size": 0,
+      "mode": "0500",
+      "description": "Client for local belabox communication"
+    },
+    "belabox-api/cloud_client.py": {
+      "version": "3.0.0",
+      "sha256": "",
+      "size": 0,
+      "mode": "0500",
+      "description": "WebSocket client with 250MB message support and manifest integration",
+      "restart_services": ["glowf1sh-cloud-client"]
+    },
+    "belabox-api/license-validator.py": {
+      "version": "3.0.0",
+      "sha256": "",
+      "size": 0,
+      "mode": "0500",
+      "description": "License validation module"
+    },
+    "belabox-api/update_handler.py": {
+      "version": "3.0.0",
+      "sha256": "",
+      "size": 0,
+      "mode": "0500",
+      "description": "Update handler with rollback support and manifest integration",
+      "restart_services": ["glowf1sh-cloud-client"],
+      "dependencies": ["belabox-api/manifest_handler.py"]
+    },
+    "belabox-api/manifest_handler.py": {
+      "version": "3.0.0",
+      "sha256": "",
+      "size": 0,
+      "mode": "0500",
+      "description": "Manifest management and integrity verification"
+    },
+    "rist/adaptive_controller.py": {
+      "version": "3.0.0",
+      "sha256": "",
+      "size": 0,
+      "mode": "0500",
+      "description": "Adaptive bitrate controller for RIST"
+    },
+    "rist/license_client.py": {
+      "version": "3.0.0",
+      "sha256": "",
+      "size": 0,
+      "mode": "0500",
+      "description": "License client for RIST features"
+    },
+    "rist/rist_manager.py": {
+      "version": "3.0.0",
+      "sha256": "",
+      "size": 0,
+      "mode": "0500",
+      "description": "RIST stream manager"
+    },
+    "rist/rist_profiles.py": {
+      "version": "3.0.0",
+      "sha256": "",
+      "size": 0,
+      "mode": "0500",
+      "description": "RIST profile management"
+    },
+    "cli/glowf1sh-license": {
+      "version": "1.0.1",
+      "sha256": "",
+      "size": 0,
+      "mode": "0755",
+      "type": "file",
+      "description": "CLI tool with version display",
+      "symlink": "/usr/bin/glowf1sh-license"
+    }
+  }
+}
