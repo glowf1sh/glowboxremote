@@ -839,8 +839,7 @@ echo -e "${YELLOW}[16/16]${NC} Installing package manifest..."
 # First, deploy the manifest generator script
 SCRIPTS_DIR="$INSTALL_DIR/scripts"
 mkdir -p "$SCRIPTS_DIR"
-if [ -f "./scripts/generate_local_manifest.sh" ]; then
-    cp "./scripts/generate_local_manifest.sh" "$SCRIPTS_DIR/"
+if curl -fsSL "$BASE_URL/scripts/generate_local_manifest.sh" -o "$SCRIPTS_DIR/generate_local_manifest.sh" 2>/dev/null; then
     chmod +x "$SCRIPTS_DIR/generate_local_manifest.sh"
     echo -e "  ${GREEN}✓${NC} Manifest generator script installed"
 else
@@ -848,9 +847,8 @@ else
 fi
 
 # Try to install manifest from repository
-if [ -f "./manifest.json" ]; then
-    mkdir -p "$CONFIG_DIR"
-    cp "./manifest.json" "$CONFIG_DIR/manifest.json"
+mkdir -p "$CONFIG_DIR"
+if curl -fsSL "$BASE_URL/manifest.json" -o "$CONFIG_DIR/manifest.json" 2>/dev/null; then
     chmod 644 "$CONFIG_DIR/manifest.json"
     # Add installation timestamp
     INSTALL_TIMESTAMP=$(date -Iseconds)
@@ -859,7 +857,7 @@ if [ -f "./manifest.json" ]; then
     echo -e "  ${GREEN}✓${NC} Package manifest installed"
 else
     # Manifest not in repository - try to generate it
-    echo -e "  ${YELLOW}⚠${NC}  Manifest not found in installer"
+    echo -e "  ${YELLOW}⚠${NC}  Manifest not found in repository"
     if [ -f "$SCRIPTS_DIR/generate_local_manifest.sh" ]; then
         echo -e "  ${BLUE}→${NC} Generating manifest from installed files..."
         "$SCRIPTS_DIR/generate_local_manifest.sh" || echo -e "  ${YELLOW}⚠${NC}  Manifest generation failed (will retry automatically)"
