@@ -1,5 +1,5 @@
 {
-  "manifest_version": "3.0.0",
+  "manifest_version": "1.0.1",
   "last_updated": "2025-11-01T05:00:00Z",
   "system_requirements": {
     "python": ">=3.9",
