@@ -835,6 +835,19 @@ chattr +i "$CONFIG_DIR/config.json" 2>/dev/null || true
 
 # Install manifest for package tracking
 echo -e "${YELLOW}[16/16]${NC} Installing package manifest..."
+
+# First, deploy the manifest generator script
+SCRIPTS_DIR="$INSTALL_DIR/scripts"
+mkdir -p "$SCRIPTS_DIR"
+if [ -f "./scripts/generate_local_manifest.sh" ]; then
+    cp "./scripts/generate_local_manifest.sh" "$SCRIPTS_DIR/"
+    chmod +x "$SCRIPTS_DIR/generate_local_manifest.sh"
+    echo -e "  ${GREEN}✓${NC} Manifest generator script installed"
+else
+    echo -e "  ${YELLOW}⚠${NC}  Manifest generator script not found"
+fi
+
+# Try to install manifest from repository
 if [ -f "./manifest.json" ]; then
     mkdir -p "$CONFIG_DIR"
     cp "./manifest.json" "$CONFIG_DIR/manifest.json"
@@ -845,7 +858,14 @@ if [ -f "./manifest.json" ]; then
     chmod 644 "$CONFIG_DIR/install_info.json"
     echo -e "  ${GREEN}✓${NC} Package manifest installed"
 else
-    echo -e "  ${YELLOW}⚠${NC}  Manifest not found (continuing without package tracking)"
+    # Manifest not in repository - try to generate it
+    echo -e "  ${YELLOW}⚠${NC}  Manifest not found in installer"
+    if [ -f "$SCRIPTS_DIR/generate_local_manifest.sh" ]; then
+        echo -e "  ${BLUE}→${NC} Generating manifest from installed files..."
+        "$SCRIPTS_DIR/generate_local_manifest.sh" || echo -e "  ${YELLOW}⚠${NC}  Manifest generation failed (will retry automatically)"
+    else
+        echo -e "  ${YELLOW}⚠${NC}  Cannot generate manifest (script missing)"
+    fi
 fi
 
 # Installation complete
