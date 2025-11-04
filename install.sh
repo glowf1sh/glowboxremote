@@ -938,4 +938,3 @@ echo ""
 echo -e "${GREEN}For more information, visit: https://github.com/${GITHUB_REPO}${NC}"
 echo -e "${GREEN}Support: https://twitch.tv/glowf1sh${NC}"
 echo ""
-# v1.0.4
