@@ -673,6 +673,8 @@ RIST_MODULES=(
     "adaptive_controller.py"
     "license_client.py"
     "rist_profiles.py"
+    "profile_crypto.py"
+    "profile_sync.py"
 )
 
 RIST_COUNT=0
@@ -860,6 +862,31 @@ if systemctl enable glowf1sh-license-validator.timer 2>/dev/null; then
     echo -e "  ${GREEN}✓${NC} License validator timer enabled and started"
 else
     echo -e "  ${YELLOW}⚠${NC}  Could not enable timer (systemd not available?)"
+fi
+
+# Download and install RIST profile sync service
+if curl -fsSL "$BASE_URL/systemd/glowf1sh-rist-profile-sync.service" -o /etc/systemd/system/glowf1sh-rist-profile-sync.service 2>/dev/null; then
+    echo -e "  ${GREEN}✓${NC} RIST profile sync service installed"
+else
+    echo -e "  ${YELLOW}⚠${NC}  RIST profile sync service not found"
+fi
+
+# Download and install RIST profile sync timer
+if curl -fsSL "$BASE_URL/systemd/glowf1sh-rist-profile-sync.timer" -o /etc/systemd/system/glowf1sh-rist-profile-sync.timer 2>/dev/null; then
+    echo -e "  ${GREEN}✓${NC} RIST profile sync timer installed"
+else
+    echo -e "  ${YELLOW}⚠${NC}  RIST profile sync timer not found"
+fi
+
+# Reload systemd for new RIST services
+systemctl daemon-reload 2>/dev/null || true
+
+# Enable and start the RIST profile sync timer
+if systemctl enable glowf1sh-rist-profile-sync.timer 2>/dev/null; then
+    systemctl start glowf1sh-rist-profile-sync.timer 2>/dev/null
+    echo -e "  ${GREEN}✓${NC} RIST profile sync timer enabled and started"
+else
+    echo -e "  ${YELLOW}⚠${NC}  Could not enable RIST profile sync timer (systemd not available?)"
 fi
 
 # Set initial permissions

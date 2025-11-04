@@ -1,0 +1,11 @@
+[Unit]
+Description=RIST Profile Sync Timer
+Requires=glowf1sh-rist-profile-sync.service
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=1h
+Unit=glowf1sh-rist-profile-sync.service
+
+[Install]
+WantedBy=timers.target

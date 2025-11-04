@@ -1,0 +1,14 @@
+[Unit]
+Description=RIST Profile Sync Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /opt/glowf1sh-remote/rist/profile_sync.py sync
+User=root
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
