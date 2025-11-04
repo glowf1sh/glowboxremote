@@ -16,7 +16,7 @@ RestartSec=10
 # Security
 User=root
 ProtectSystem=strict
-ReadWritePaths=/opt/glowf1sh-remote
+ReadWritePaths=/opt/glowf1sh-remote /opt/belaUI /tmp
 PrivateTmp=yes
 NoNewPrivileges=yes
 
