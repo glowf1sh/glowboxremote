@@ -1,144 +1,133 @@
 {
-  "manifest_version": "1.0.4",
-  "last_updated": "2025-11-04T11:41:42.779315+00:00",
-  "system_requirements": {
-    "python": ">=3.9",
-    "systemd": true,
-    "min_disk_space_mb": 500
-  },
+  "manifest_version": "1.0.2",
+  "last_updated": "2025-11-04T16:06:06Z",
   "files": {
     "belabox-api/api_server.py": {
-      "version": "1.0.0",
-      "sha256": "564b55df238add2f70099ab1a9eec8bc75ebac6002e38f0e36a7fd5c48e5a420",
-      "size": 60360,
-      "mode": "0500",
-      "description": "API server for local belabox interface",
-      "restart_services": [
-        "glowf1sh-api-server"
-      ]
-    },
-    "belabox-api/belabox_client.py": {
-      "version": "1.0.0",
-      "sha256": "54e6d60364b534a21a8fdeb1fa24ef84ba25837e632e34567c48a8f33860de3f",
-      "size": 84538,
-      "mode": "0500",
-      "description": "Client for local belabox communication"
-    },
-    "belabox-api/cloud_client.py": {
-      "version": "1.0.0",
-      "sha256": "5e105c7c53eac89b5c3693161c149ac41705a733b9cb599b3f46058e3d5aa07a",
-      "size": 102776,
-      "mode": "0500",
-      "description": "WebSocket client with 250MB message support and manifest integration",
-      "restart_services": [
-        "glowf1sh-cloud-client"
-      ]
-    },
-    "belabox-api/license-validator.py": {
-      "version": "1.0.0",
-      "sha256": "2957779ce8290d08fe74ccc2926c0415b793b35f52443c0e6e39d2c863ece218",
-      "size": 21708,
-      "mode": "0500",
-      "description": "License validation module"
+      "version": "1.0.1",
+      "sha256": "98134caef8de48e4462214bd5b7e52fd601b532ec6fd5f09df7928a0dedbd260",
+      "size": 60301,
+      "mode": "0755"
     },
     "belabox-api/update_handler.py": {
-      "version": "1.0.0",
-      "sha256": "6ea4b847b14f6421f0e95eb4c6abc636649b00a5ebde4c23cecfbdcf872a36e0",
-      "size": 55836,
-      "mode": "0500",
-      "description": "Update handler with rollback support and manifest integration",
+      "version": "1.0.1",
+      "sha256": "ea31cd7aa302631485c9d436ec1a1901f519c240f71dfc2b53ab9fc805713a37",
+      "size": 55735,
+      "mode": "0755",
       "restart_services": [
         "glowf1sh-cloud-client"
       ],
-      "dependencies": [
-        "belabox-api/manifest_handler.py"
-      ]
+      "description": "Update execution with rollback support"
     },
     "belabox-api/manifest_handler.py": {
-      "version": "1.0.0",
-      "sha256": "b4ddeab94e69cc8609ae29c5b97c5acf96bcf56695706db07e076d3b0d6c6096",
-      "size": 54445,
-      "mode": "0500",
-      "description": "Manifest management and integrity verification"
+      "version": "1.0.1",
+      "sha256": "4bc6002b5d83b351ea2c65dfc9b5a4fe8b222807092619152560fa9b286a0bae",
+      "size": 54633,
+      "mode": "0644",
+      "restart_services": [
+        "glowf1sh-cloud-client"
+      ],
+      "description": "Manifest and integrity management"
     },
-    "rist/adaptive_controller.py": {
-      "version": "1.0.0",
-      "sha256": "ce359678377736fb76cce4ff5d4870a718595e6760e5ba8e0df471714a33739d",
-      "size": 56159,
-      "mode": "0500",
-      "description": "Adaptive bitrate controller for RIST"
+    "belabox-api/license-validator.py": {
+      "version": "1.0.1",
+      "sha256": "2dbe16dfc2f21ef4238d69c4454890c56ef4e44cb83e70efb3bfd9df5fc88514",
+      "size": 21678,
+      "mode": "0644"
     },
-    "rist/license_client.py": {
-      "version": "1.0.0",
-      "sha256": "f65834e8a988a7c26d59276de44427e30b332f8499cc13ab482c628ea1380074",
-      "size": 48174,
-      "mode": "0500",
-      "description": "License client for RIST features"
-    },
-    "rist/rist_manager.py": {
-      "version": "1.0.0",
-      "sha256": "f8d8fed46f738f754a16bf4fa1b8649877c5d78e30c425cef70a462f725a199d",
-      "size": 56338,
-      "mode": "0500",
-      "description": "RIST stream manager"
-    },
-    "rist/rist_profiles.py": {
-      "version": "1.0.0",
-      "sha256": "969e7b20d2233192ef1dfe3ff4427322873c99496d14dd0bda229bc29d32b8e2",
-      "size": 37053,
-      "mode": "0500",
-      "description": "RIST profile management"
-    },
-    "cli/glowf1sh-license": {
-      "version": "1.0.2",
-      "sha256": "9310313395c8b92b46f55d900ee6e238eb70d4f927e20ad57abed24c56434c72",
-      "size": 4980736,
+    "belabox-api/cloud_client.py": {
+      "version": "1.0.1",
+      "sha256": "cdce3fb9f65229dce9bf6492f0be4cfe9554f680f150de60f3d4204a1edcee2d",
+      "size": 102884,
       "mode": "0755",
-      "type": "file",
-      "description": "CLI tool - Fixed duplicate help output, removed completion command",
-      "symlink": "/usr/bin/glowf1sh-license"
+      "restart_services": [
+        "glowf1sh-cloud-client"
+      ],
+      "description": "WebSocket client with 250MB transfer limit"
     },
-    "systemd/glowf1sh-api-server.service": {
-      "version": "1.0.0",
-      "sha256": "c3b8c4a6548706958e9cc7a0b15b00319794c5144cdf32aefc838a2ac3386cc9",
-      "size": 534,
-      "mode": "0644",
-      "description": "Systemd service for API server"
+    "belabox-api/__init__.py": {
+      "version": "1.0.1",
+      "sha256": "fd2fa9eb7c31ee157ca6e9aa3b8f79cf6c66ea661503a80c307f3b69aff6fe7f",
+      "size": 729,
+      "mode": "0644"
     },
-    "systemd/glowf1sh-cloud-client.service": {
-      "version": "1.0.0",
-      "sha256": "b811ba1fdfb04478c105ac5ed103a10b6d50930d4247f778921823ac8dbc7677",
-      "size": 628,
-      "mode": "0644",
-      "description": "Systemd service for cloud client"
+    "belabox-api/belabox_client.py": {
+      "version": "1.0.1",
+      "sha256": "4b5c0a266d1b1d8c0b23f4ace16d9658c0523ce279d531573979a30eb126815f",
+      "size": 84881,
+      "mode": "0755"
     },
-    "systemd/glowf1sh-license-validator.service": {
+    "belabox-api/_core/pyarmor_runtime_011004/__init__.py": {
       "version": "1.0.0",
-      "sha256": "b1544f075c11c5418c8f150c35120027bacd806a77d08b20698a561da6c4bd64",
-      "size": 523,
-      "mode": "0644",
-      "description": "Systemd service for license validator"
-    },
-    "systemd/glowf1sh-license-validator.timer": {
-      "version": "1.0.0",
-      "sha256": "087f046885e4953730f61c04ed0858406f4114d235848392fc4bfa75ec3bf03c",
-      "size": 469,
-      "mode": "0644",
-      "description": "Systemd timer for license validator"
-    },
-    "install.sh": {
-      "version": "1.0.0",
-      "sha256": "535133bf7e3aa0bdb80505bb705a574410ee042b59f487d989aa3a95f9144ace",
-      "size": 39114,
-      "mode": "0755",
-      "description": "Installation script"
+      "sha256": "030a2eaf02787dd0c370fc3b6dfb944c2cb6730e7461444ec5ef3c01db46dd06",
+      "size": 99,
+      "mode": "0644"
     },
     "scripts/generate_local_manifest.sh": {
       "version": "1.0.0",
       "sha256": "ad5ebc0d86c9e6ab515585d99f543a837d7f6e2e99d07213f2c9ad73747d8ff7",
       "size": 5776,
+      "mode": "0755"
+    },
+    "cli/glowf1sh-license": {
+      "version": "1.0.1",
+      "sha256": "16fc95308eabd34458a8cd6d28950b977ece60b7dd45bae05e191fd6cf396815",
+      "size": 4980736,
       "mode": "0755",
-      "description": "Manifest generator script"
+      "description": "License validation tool"
+    },
+    "rist/rist_profiles.py": {
+      "version": "1.0.1",
+      "sha256": "b006b6984733627ee1967966fa98e9d5cdec690e359821c0e0984581994d3ed0",
+      "size": 36976,
+      "mode": "0644",
+      "restart_services": [
+        "rist-relay"
+      ]
+    },
+    "rist/license_client.py": {
+      "version": "1.0.1",
+      "sha256": "9d3c846605256af722f2112974ad57f0d70d554ecee98002f1426f7c5436bd80",
+      "size": 48108,
+      "mode": "0644",
+      "restart_services": [
+        "rist-relay"
+      ]
+    },
+    "rist/adaptive_controller.py": {
+      "version": "1.0.1",
+      "sha256": "77ef77f51fd6a9b74fdcee494737c4b750ebe1af68ed0f9ed8da9a9634bf9f76",
+      "size": 56322,
+      "mode": "0644",
+      "restart_services": [
+        "rist-relay"
+      ]
+    },
+    "rist/rist_manager.py": {
+      "version": "1.0.1",
+      "sha256": "e0c3a38202fa11fa4f788b40853e105303b1ae40b778a3f30b8fccb53988bbe7",
+      "size": 56109,
+      "mode": "0644",
+      "restart_services": [
+        "rist-relay"
+      ]
+    },
+    "rist/_core/pyarmor_runtime_011004/pyarmor_runtime.so": {
+      "version": "1.0.0",
+      "sha256": "5121489d6f8c7dd9d330dea58402a12ddb6534e716b6b975101ed54765f6d481",
+      "size": 616056,
+      "mode": "0755",
+      "restart_services": [
+        "rist-relay"
+      ]
+    },
+    "rist/_core/pyarmor_runtime_011004/__init__.py": {
+      "version": "1.0.0",
+      "sha256": "8af0ba9c67a1eb8b45f5d491bb9c6707f31cc6fcb3062e56dcea8b6e1769b727",
+      "size": 99,
+      "mode": "0644",
+      "restart_services": [
+        "rist-relay"
+      ]
     }
   }
 }
