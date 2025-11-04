@@ -1,6 +1,6 @@
 {
-  "manifest_version": "1.0.3",
-  "last_updated": "2025-11-04T10:57:05.189660+00:00",
+  "manifest_version": "1.0.4",
+  "last_updated": "2025-11-04T11:41:42.779315+00:00",
   "system_requirements": {
     "python": ">=3.9",
     "systemd": true,
@@ -9,8 +9,8 @@
   "files": {
     "belabox-api/api_server.py": {
       "version": "1.0.0",
-      "sha256": "ec0611363acbc79ddae6837788ad61878fee853143876b2e480a060950557a67",
-      "size": 60193,
+      "sha256": "564b55df238add2f70099ab1a9eec8bc75ebac6002e38f0e36a7fd5c48e5a420",
+      "size": 60360,
       "mode": "0500",
       "description": "API server for local belabox interface",
       "restart_services": [
@@ -19,15 +19,15 @@
     },
     "belabox-api/belabox_client.py": {
       "version": "1.0.0",
-      "sha256": "083f96d34af60e0d2039d7414f2a9a9c29ab20df8503e9ac56ea0e655cc7fe9b",
-      "size": 82722,
+      "sha256": "54e6d60364b534a21a8fdeb1fa24ef84ba25837e632e34567c48a8f33860de3f",
+      "size": 84538,
       "mode": "0500",
       "description": "Client for local belabox communication"
     },
     "belabox-api/cloud_client.py": {
       "version": "1.0.0",
-      "sha256": "46a7e2347a4f2d7296ae44be14c8f666068f0795ae7fe9662e943ffd00a965e2",
-      "size": 102364,
+      "sha256": "5e105c7c53eac89b5c3693161c149ac41705a733b9cb599b3f46058e3d5aa07a",
+      "size": 102776,
       "mode": "0500",
       "description": "WebSocket client with 250MB message support and manifest integration",
       "restart_services": [
@@ -36,15 +36,15 @@
     },
     "belabox-api/license-validator.py": {
       "version": "1.0.0",
-      "sha256": "c47f7df88724c39ac6d8d134416c1caf3a9f2ff2264396f0c6bc1bdba75c30a8",
-      "size": 21730,
+      "sha256": "2957779ce8290d08fe74ccc2926c0415b793b35f52443c0e6e39d2c863ece218",
+      "size": 21708,
       "mode": "0500",
       "description": "License validation module"
     },
     "belabox-api/update_handler.py": {
       "version": "1.0.0",
-      "sha256": "2c0e82bd8f22436a4fdcaa44418ad1ac7bd952d0f5252f1cbef5ef32a228a7b2",
-      "size": 55638,
+      "sha256": "6ea4b847b14f6421f0e95eb4c6abc636649b00a5ebde4c23cecfbdcf872a36e0",
+      "size": 55836,
       "mode": "0500",
       "description": "Update handler with rollback support and manifest integration",
       "restart_services": [
@@ -56,36 +56,36 @@
     },
     "belabox-api/manifest_handler.py": {
       "version": "1.0.0",
-      "sha256": "ea90058f43939e4d769d39f9b24fb30278734f4ed67299555cdd4fa2fc6cd489",
-      "size": 54242,
+      "sha256": "b4ddeab94e69cc8609ae29c5b97c5acf96bcf56695706db07e076d3b0d6c6096",
+      "size": 54445,
       "mode": "0500",
       "description": "Manifest management and integrity verification"
     },
     "rist/adaptive_controller.py": {
       "version": "1.0.0",
-      "sha256": "11ccd911f14be1a00b085705b82fd971d63d2dff49286a045d4fcc3dcc70c776",
-      "size": 56286,
+      "sha256": "ce359678377736fb76cce4ff5d4870a718595e6760e5ba8e0df471714a33739d",
+      "size": 56159,
       "mode": "0500",
       "description": "Adaptive bitrate controller for RIST"
     },
     "rist/license_client.py": {
       "version": "1.0.0",
-      "sha256": "7c937a93932c6e45c340a5d0fcac1f4066afc1ba0e8342ea23149c9fb51371c1",
-      "size": 48360,
+      "sha256": "f65834e8a988a7c26d59276de44427e30b332f8499cc13ab482c628ea1380074",
+      "size": 48174,
       "mode": "0500",
       "description": "License client for RIST features"
     },
     "rist/rist_manager.py": {
       "version": "1.0.0",
-      "sha256": "bcd386fe5876e66fd7e2bbc8bbea0e6f1d2b9bb10781e7289eb08fe3a68ad1c8",
-      "size": 56021,
+      "sha256": "f8d8fed46f738f754a16bf4fa1b8649877c5d78e30c425cef70a462f725a199d",
+      "size": 56338,
       "mode": "0500",
       "description": "RIST stream manager"
     },
     "rist/rist_profiles.py": {
       "version": "1.0.0",
-      "sha256": "6e3a91f21b692f980a6b87e1b6689f078d8ceeb4b50b8e5526c3d61a8376b404",
-      "size": 37070,
+      "sha256": "969e7b20d2233192ef1dfe3ff4427322873c99496d14dd0bda229bc29d32b8e2",
+      "size": 37053,
       "mode": "0500",
       "description": "RIST profile management"
     },
