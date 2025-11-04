@@ -1,17 +1,17 @@
 {
-  "manifest_version": "1.0.3",
-  "last_updated": "2025-11-04T19:07:12Z",
+  "manifest_version": "1.0.4",
+  "last_updated": "2025-11-04T20:11:22Z",
   "files": {
     "belabox-api/api_server.py": {
-      "version": "1.0.2",
-      "sha256": "eb0cc865406daf525185ead439233d7d60173854c01391ef1a9e795c9ff7eb3c",
-      "size": 64884,
+      "version": "1.0.3",
+      "sha256": "dad1ffc46e20fccac7812f953bd810882c973d847fdecc04ed539a2d96fcf102",
+      "size": 64405,
       "mode": "0755"
     },
     "belabox-api/update_handler.py": {
       "version": "1.0.1",
-      "sha256": "47e134630d622088121b430022a622dbf5da63b434313e1b136495437b42ddb3",
-      "size": 55833,
+      "sha256": "052ce1752d9a207ad9289f7935591699e7394dc3f79f0f7f382eeb3c95101006",
+      "size": 55677,
       "mode": "0755",
       "restart_services": [
         "glowf1sh-cloud-client"
@@ -20,8 +20,8 @@
     },
     "belabox-api/manifest_handler.py": {
       "version": "1.0.1",
-      "sha256": "9d48f07aaa79ea0e42bf77fe0cd31ed95e5ae0bf1ba32f7859e5ca8c5a9c6d5b",
-      "size": 54377,
+      "sha256": "409cc8e93071fb2a2804cd3218c9e12ad92b45aa70632af63fadd9c6b86e9832",
+      "size": 54659,
       "mode": "0644",
       "restart_services": [
         "glowf1sh-cloud-client"
@@ -30,14 +30,14 @@
     },
     "belabox-api/license-validator.py": {
       "version": "1.0.1",
-      "sha256": "0d164d195a2427224f6f4c7baf8214c5218186c8ef155376af1918688f3884a0",
-      "size": 21842,
+      "sha256": "4a0bf6c8ede350c3ab6a5683a8a444aa024ad26428aff769fb2cc1a42d80b2f4",
+      "size": 21820,
       "mode": "0644"
     },
     "belabox-api/cloud_client.py": {
       "version": "1.0.2",
-      "sha256": "8eba54b04f650bd75e20a8fb04f4faf937f30b1ae3dec10ab8fe61245e7d1cd1",
-      "size": 101498,
+      "sha256": "779a0b30b37c5b91b3c28363fa445deb7fe61d53bb6a83b8c6ad1cd3eb26af7d",
+      "size": 101647,
       "mode": "0755",
       "restart_services": [
         "glowf1sh-cloud-client"
@@ -46,19 +46,19 @@
     },
     "belabox-api/__init__.py": {
       "version": "1.0.1",
-      "sha256": "18b313cf5410a33e434e83de76bdaa48f433898d9a6b61c6dc7531508064c190",
-      "size": 765,
+      "sha256": "cb8fc51c2fa71bc681b53991af999335f2846b70464bcd57f0396edb2221b80b",
+      "size": 727,
       "mode": "0644"
     },
     "belabox-api/belabox_client.py": {
       "version": "1.0.2",
-      "sha256": "9e6252a49013bc0503fb5e511a19bbcec61c6b72225ec8091a27d1252a78dbf5",
-      "size": 84969,
+      "sha256": "209fc93eb1add63eb16fe0ac97013bdec73d724d58ab6b6662b5b0f86cca21a6",
+      "size": 84296,
       "mode": "0755"
     },
     "belabox-api/_core/pyarmor_runtime_011004/__init__.py": {
       "version": "1.0.0",
-      "sha256": "a6f067108285dac68ba9fa7f98c87ac4a1d9d005ca6d8f908290fc2ace76f95a",
+      "sha256": "4000e1d8358daa7a35b4184a334849f418ee86c904fef75d3b3320d634008f65",
       "size": 99,
       "mode": "0644"
     },
@@ -77,8 +77,8 @@
     },
     "rist/rist_profiles.py": {
       "version": "1.0.2",
-      "sha256": "0ce14991b3a1a71ad398cb776d0ab1d48ef0be2fb08822870bbb062fd9bbdbdb",
-      "size": 48408,
+      "sha256": "edcb3763e38152e6487e1eb885cc42617b02f87aeb1a77f0dfe763894a0906b2",
+      "size": 48351,
       "mode": "0644",
       "restart_services": [
         "rist-relay"
@@ -86,8 +86,8 @@
     },
     "rist/license_client.py": {
       "version": "1.0.1",
-      "sha256": "27b19eb62c62e4d900e9a91546fc726e7c565abb28de7c2df4b318a992a21252",
-      "size": 48299,
+      "sha256": "1d62f2d7881f28efd85d5a588153b9771bde7fc76b717f7b2cc8184005476f70",
+      "size": 48288,
       "mode": "0644",
       "restart_services": [
         "rist-relay"
@@ -95,8 +95,8 @@
     },
     "rist/adaptive_controller.py": {
       "version": "1.0.1",
-      "sha256": "3a35b226a7098e4331fc02d6bbd22786816814d24587398582db95c6e9bca96b",
-      "size": 56395,
+      "sha256": "98eceaaf2e766a12c4df5c6f113b31895f129024ff9fd8d3e80478ca868a36a7",
+      "size": 55898,
       "mode": "0644",
       "restart_services": [
         "rist-relay"
@@ -104,8 +104,8 @@
     },
     "rist/rist_manager.py": {
       "version": "1.0.2",
-      "sha256": "659a91c412a1535b1d2e61cdbe2141a9f33912c3d358ede185f3e4f5e149a753",
-      "size": 56805,
+      "sha256": "9ce7052797f8acc5d5375f7af0fc7bbf345d20e0f5bfa6c7fbbd020c22b133de",
+      "size": 56538,
       "mode": "0644",
       "restart_services": [
         "rist-relay"
@@ -113,7 +113,7 @@
     },
     "rist/_core/pyarmor_runtime_011004/pyarmor_runtime.so": {
       "version": "1.0.0",
-      "sha256": "630281a58e214627551027a328f2b2930b0124a3d96ca52f293bcb8b5fc8613f",
+      "sha256": "2e836e6774076e8dd378e985de8f0b4d2aecd5e1ea20675a975fb6752bf23d81",
       "size": 616056,
       "mode": "0755",
       "restart_services": [
@@ -122,7 +122,7 @@
     },
     "rist/_core/pyarmor_runtime_011004/__init__.py": {
       "version": "1.0.0",
-      "sha256": "fa4562772683ff5716a54818528992d3b4444f4256e12d90b11edbfc560d0b97",
+      "sha256": "a6d2dcf0d95e747bc6ae5257963a3e5d65f474b4cb46c55496650296bb4d715e",
       "size": 99,
       "mode": "0644",
       "restart_services": [
