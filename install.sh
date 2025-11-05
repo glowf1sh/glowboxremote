@@ -554,8 +554,22 @@ EOF
 chmod 600 "$CONFIG_DIR/license.json"
 echo -e "  ${GREEN}✓${NC} license.json created"
 
-# Step 10: Install Python dependencies
-echo -e "${YELLOW}[10/15]${NC} Installing Python dependencies..."
+# Step 10: Install system dependencies for RIST hardware detection
+echo -e "${YELLOW}[10/16]${NC} Installing system dependencies..."
+# v4l-utils: Required for video device detection (v4l2-ctl)
+# alsa-utils: Required for audio device detection (arecord)
+if command -v apt-get >/dev/null 2>&1; then
+    if apt-get install -y v4l-utils alsa-utils >/dev/null 2>&1; then
+        echo -e "  ${GREEN}✓${NC} System dependencies installed (v4l-utils, alsa-utils)"
+    else
+        echo -e "  ${YELLOW}⚠${NC}  Failed to install system dependencies (v4l-utils, alsa-utils)"
+    fi
+else
+    echo -e "  ${YELLOW}⚠${NC}  apt-get not found, skipping system dependencies"
+fi
+
+# Step 11: Install Python dependencies
+echo -e "${YELLOW}[11/16]${NC} Installing Python dependencies..."
 # pip3 is guaranteed to be available (installed earlier)
 # Try to download requirements.txt from GitHub
 if curl -fsSL "$BASE_URL/requirements.txt" -o /tmp/requirements.txt 2>/dev/null; then
@@ -575,7 +589,7 @@ else
 fi
 
 # Step 11: Download and install Python modules
-echo -e "${YELLOW}[11/15]${NC} Installing Python modules..."
+echo -e "${YELLOW}[12/16]${NC} Installing Python modules..."
 
 MODULES=(
     "__init__.py"
@@ -674,7 +688,7 @@ else
 fi
 
 # Step 12: Download RIST modules
-echo -e "${YELLOW}[12/15]${NC} Installing RIST modules..."
+echo -e "${YELLOW}[13/16]${NC} Installing RIST modules..."
 
 RIST_MODULES=(
     "rist_manager.py"
@@ -717,7 +731,7 @@ else
 fi
 
 # Step 13: Download and verify GStreamer package
-echo -e "${YELLOW}[13/16]${NC} Installing GStreamer package..."
+echo -e "${YELLOW}[14/16]${NC} Installing GStreamer package..."
 echo "  Downloading GStreamer (this may take a moment)..."
 
 if curl -fsSL "$BASE_URL/gstreamer-arm64.tar.xz" -o /tmp/gstreamer-arm64.tar.xz 2>/dev/null && \
@@ -741,7 +755,7 @@ fi
 
 # Step 14: License activation (interactive)
 # Note: Box registration happens automatically during license activation via /api/box/activate
-echo -e "${YELLOW}[14/16]${NC} License activation..."
+echo -e "${YELLOW}[15/16]${NC} License activation..."
 
 # Only prompt if running in interactive terminal
 # Use /dev/tty to handle piped execution (curl | bash)
@@ -811,7 +825,7 @@ else
 fi
 
 # Step 15: Install systemd service, timer, and scripts
-echo -e "${YELLOW}[15/16]${NC} Installing system services..."
+echo -e "${YELLOW}[16/16]${NC} Installing system services..."
 
 # Download and install service file
 if curl -fsSL "$BASE_URL/systemd/glowf1sh-license-validator.service" -o /etc/systemd/system/glowf1sh-license-validator.service 2>/dev/null; then
@@ -915,7 +929,8 @@ chattr +i "$CONFIG_DIR/rist_service.env" 2>/dev/null || true
 chattr +i "$CONFIG_DIR/cloud_api.env" 2>/dev/null || true
 
 # Install manifest for package tracking
-echo -e "${YELLOW}[16/16]${NC} Installing package manifest..."
+# Note: This is actually step 17, but keeping numbering for backward compatibility
+echo -e "${YELLOW}[17/17]${NC} Installing package manifest..."
 
 # First, deploy the manifest generator script
 SCRIPTS_DIR="$INSTALL_DIR/scripts"
