@@ -6,6 +6,7 @@ Wants=network-online.target
 
 [Service]
 Type=simple
+EnvironmentFile=/opt/glowf1sh-remote/config/cloud_api.env
 ExecStart=/usr/bin/python3 /opt/glowf1sh-remote/belabox-api/api_server.py
 StandardOutput=journal
 StandardError=journal

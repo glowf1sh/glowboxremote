@@ -7,6 +7,7 @@ Requires=glowf1sh-api-server.service
 
 [Service]
 Type=simple
+EnvironmentFile=/opt/glowf1sh-remote/config/cloud_api.env
 ExecStart=/usr/bin/python3 /opt/glowf1sh-remote/belabox-api/cloud_client.py
 StandardOutput=journal
 StandardError=journal

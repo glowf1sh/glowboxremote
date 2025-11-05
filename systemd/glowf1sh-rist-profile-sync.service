@@ -5,6 +5,7 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
+EnvironmentFile=/opt/glowf1sh-remote/config/rist_service.env
 ExecStart=/usr/bin/python3 /opt/glowf1sh-remote/rist/profile_sync.py sync
 User=root
 StandardOutput=journal

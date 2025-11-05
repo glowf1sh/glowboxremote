@@ -143,6 +143,12 @@ uninstall_glowf1sh() {
     if [ -f "$CONFIG_DIR/license.json" ]; then
         chattr -i "$CONFIG_DIR/license.json" 2>/dev/null || true
     fi
+    if [ -f "$CONFIG_DIR/rist_service.env" ]; then
+        chattr -i "$CONFIG_DIR/rist_service.env" 2>/dev/null || true
+    fi
+    if [ -f "$CONFIG_DIR/cloud_api.env" ]; then
+        chattr -i "$CONFIG_DIR/cloud_api.env" 2>/dev/null || true
+    fi
     echo -e "  ${GREEN}✓${NC} Immutability flags removed"
 
     echo -e "${YELLOW}[4/7]${NC} Removing installation directory..."
@@ -499,6 +505,14 @@ chmod 400 "$CONFIG_DIR/config.json"
 chattr +i "$CONFIG_DIR/config.json"
 echo -e "  ${GREEN}✓${NC} config.json updated with Box ID"
 
+# Create RIST service environment file (restricted permissions)
+cat > "$CONFIG_DIR/rist_service.env" <<'EOF'
+RIST_SERVICE_KEY=0150faf7-b531-42af-996d-0405cfb28191
+EOF
+chmod 400 "$CONFIG_DIR/rist_service.env"
+chattr +i "$CONFIG_DIR/rist_service.env"
+echo -e "  ${GREEN}✓${NC} RIST service key configured (restricted access)"
+
 # Step 8: Register box with license server
 echo -e "${YELLOW}[8/15]${NC} Registering box with license server..."
 REGISTER_OUTPUT=$("$CLI_BINARY" register 2>&1)
@@ -512,17 +526,13 @@ if [ $REGISTER_EXIT -eq 0 ]; then
     API_KEY=$(echo "$REGISTER_OUTPUT" | grep "^API Key:" | awk '{print $3}')
 
     if [ ! -z "$API_KEY" ]; then
-        # Update config.json with API Key
-        chattr -i "$CONFIG_DIR/config.json"
-        chmod 600 "$CONFIG_DIR/config.json"
-
-        TMP_CONFIG=$(mktemp)
-        jq --arg key "$API_KEY" '.cloud_api_key = $key' "$CONFIG_DIR/config.json" > "$TMP_CONFIG"
-        mv "$TMP_CONFIG" "$CONFIG_DIR/config.json"
-
-        chmod 400 "$CONFIG_DIR/config.json"
-        chattr +i "$CONFIG_DIR/config.json"
-        echo -e "  ${GREEN}✓${NC} Cloud API key configured"
+        # Create cloud_api.env with API Key (restricted permissions)
+        cat > "$CONFIG_DIR/cloud_api.env" <<EOF
+CLOUD_API_KEY=$API_KEY
+EOF
+        chmod 400 "$CONFIG_DIR/cloud_api.env"
+        chattr +i "$CONFIG_DIR/cloud_api.env"
+        echo -e "  ${GREEN}✓${NC} Cloud API key configured (restricted access)"
     fi
 else
     echo -e "  ${YELLOW}⚠${NC}  Warning: Could not register with license server (offline installation?)"
