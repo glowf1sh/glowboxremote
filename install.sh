@@ -181,8 +181,10 @@ uninstall_glowf1sh() {
     rm -rf /var/log/glowf1sh* 2>/dev/null || true
     # Remove any leftover directories in /opt
     rm -rf /opt/cloud 2>/dev/null || true
+    rm -rf /opt/gstreamer-1.24 2>/dev/null || true  # Reste von fehlgeschlagenen Installationen
     # Remove any leftover files in tmp
     rm -rf /tmp/glowf1sh-* 2>/dev/null || true
+    rm -rf /tmp/gstreamer-1.24 2>/dev/null || true  # Reste von fehlgeschlagenen Installationen
     rm -rf /tmp/gstreamer-arm64.tar.xz 2>/dev/null || true
     rm -rf /tmp/requirements.txt 2>/dev/null || true
     echo -e "  ${GREEN}✓${NC} Logs and temp files cleaned"
@@ -742,7 +744,7 @@ if curl -fsSL "$BASE_URL/gstreamer-arm64.tar.xz" -o /tmp/gstreamer-arm64.tar.xz 
     if sha256sum -c gstreamer-arm64.tar.xz.sha256 >/dev/null 2>&1; then
         echo -e "  ${GREEN}✓${NC} Verification successful"
         echo "  Extracting GStreamer..."
-        tar -xJf gstreamer-arm64.tar.xz -C "$GSTREAMER_DIR" --strip-components=1 2>/dev/null || echo -e "  ${YELLOW}⚠${NC}  Extraction warning"
+        tar -xJf /tmp/gstreamer-arm64.tar.xz -C "$GSTREAMER_DIR" --strip-components=1 2>/dev/null || echo -e "  ${YELLOW}⚠${NC}  Extraction warning"
         rm -f gstreamer-arm64.tar.xz gstreamer-arm64.tar.xz.sha256
         echo -e "  ${GREEN}✓${NC} GStreamer installed to $GSTREAMER_DIR"
     else
