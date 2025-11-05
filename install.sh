@@ -510,7 +510,6 @@ cat > "$CONFIG_DIR/rist_service.env" <<'EOF'
 RIST_SERVICE_KEY=0150faf7-b531-42af-996d-0405cfb28191
 EOF
 chmod 400 "$CONFIG_DIR/rist_service.env"
-chattr +i "$CONFIG_DIR/rist_service.env"
 echo -e "  ${GREEN}✓${NC} RIST service key configured (restricted access)"
 
 # Step 8: Register box with license server
@@ -531,7 +530,6 @@ if [ $REGISTER_EXIT -eq 0 ]; then
 CLOUD_API_KEY=$API_KEY
 EOF
         chmod 400 "$CONFIG_DIR/cloud_api.env"
-        chattr +i "$CONFIG_DIR/cloud_api.env"
         echo -e "  ${GREEN}✓${NC} Cloud API key configured (restricted access)"
     fi
 else
@@ -900,14 +898,20 @@ else
 fi
 
 # Set initial permissions
-# Temporarily remove immutable flag before chown
+# Temporarily remove immutable flags before chown
 chattr -i "$CONFIG_DIR/config.json" 2>/dev/null || true
+chattr -i "$CONFIG_DIR/rist_service.env" 2>/dev/null || true
+chattr -i "$CONFIG_DIR/cloud_api.env" 2>/dev/null || true
 chown -R root:root "$INSTALL_DIR"
 chmod 400 "$CONFIG_DIR/config.json" 2>/dev/null || true
 chmod 600 "$CONFIG_DIR/license.json" 2>/dev/null || true
+chmod 400 "$CONFIG_DIR/rist_service.env" 2>/dev/null || true
+chmod 400 "$CONFIG_DIR/cloud_api.env" 2>/dev/null || true
 chmod 700 "$CONFIG_DIR" 2>/dev/null || true
-# Restore immutable flag for config.json
+# Restore immutable flags
 chattr +i "$CONFIG_DIR/config.json" 2>/dev/null || true
+chattr +i "$CONFIG_DIR/rist_service.env" 2>/dev/null || true
+chattr +i "$CONFIG_DIR/cloud_api.env" 2>/dev/null || true
 
 # Install manifest for package tracking
 echo -e "${YELLOW}[16/16]${NC} Installing package manifest..."
