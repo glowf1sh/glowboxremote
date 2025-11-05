@@ -683,6 +683,7 @@ RIST_MODULES=(
     "rist_profiles.py"
     "profile_crypto.py"
     "profile_sync.py"
+    "device_scanner.py"
 )
 
 RIST_COUNT=0
