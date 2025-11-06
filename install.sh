@@ -560,13 +560,11 @@ echo -e "  ${GREEN}✓${NC} license.json created"
 
 # Step 10: Install system dependencies for RIST hardware detection
 echo -e "${YELLOW}[10/16]${NC} Installing system dependencies..."
-# v4l-utils: Required for video device detection (v4l2-ctl)
-# alsa-utils: Required for audio device detection (arecord)
 if command -v apt-get >/dev/null 2>&1; then
-    if apt-get install -y v4l-utils alsa-utils >/dev/null 2>&1; then
-        echo -e "  ${GREEN}✓${NC} System dependencies installed (v4l-utils, alsa-utils)"
+    if apt-get install -y v4l-utils alsa-utils libpango1.0-dev libcairo2-dev libgudev-1.0-dev libudev-dev >/dev/null 2>&1; then
+        echo -e "  ${GREEN}✓${NC} System dependencies installed"
     else
-        echo -e "  ${YELLOW}⚠${NC}  Failed to install system dependencies (v4l-utils, alsa-utils)"
+        echo -e "  ${YELLOW}⚠${NC}  Failed to install system dependencies"
     fi
 else
     echo -e "  ${YELLOW}⚠${NC}  apt-get not found, skipping system dependencies"
