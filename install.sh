@@ -182,10 +182,12 @@ uninstall_glowf1sh() {
     # Remove any leftover directories in /opt
     rm -rf /opt/cloud 2>/dev/null || true
     rm -rf /opt/gstreamer-1.24 2>/dev/null || true  # Reste von fehlgeschlagenen Installationen
+    rm -rf /opt/gstreamer-1.27 2>/dev/null || true  # Neue GStreamer Installation
     # Remove any leftover files in tmp
     rm -rf /tmp/glowf1sh-* 2>/dev/null || true
     rm -rf /tmp/gstreamer-1.24 2>/dev/null || true  # Reste von fehlgeschlagenen Installationen
-    rm -rf /tmp/gstreamer-arm64.tar.xz 2>/dev/null || true
+    rm -rf /tmp/gstreamer.tar.xz* 2>/dev/null || true  # Neuer Tarball
+    rm -rf /tmp/gstreamer-arm64.tar.xz* 2>/dev/null || true  # Alter Tarball
     rm -rf /tmp/requirements.txt 2>/dev/null || true
     echo -e "  ${GREEN}✓${NC} Logs and temp files cleaned"
 
@@ -736,20 +738,20 @@ fi
 echo -e "${YELLOW}[14/16]${NC} Installing GStreamer package..."
 echo "  Downloading GStreamer (this may take a moment)..."
 
-if curl -fsSL "$BASE_URL/gstreamer-arm64.tar.xz" -o /tmp/gstreamer-arm64.tar.xz 2>/dev/null && \
-   curl -fsSL "$BASE_URL/gstreamer-arm64.tar.xz.sha256" -o /tmp/gstreamer-arm64.tar.xz.sha256 2>/dev/null; then
+if curl -fsSL "$BASE_URL/gstreamer.tar.xz" -o /tmp/gstreamer.tar.xz 2>/dev/null && \
+   curl -fsSL "$BASE_URL/gstreamer.tar.xz.sha256" -o /tmp/gstreamer.tar.xz.sha256 2>/dev/null; then
 
     echo "  Verifying integrity..."
     cd /tmp
-    if sha256sum -c gstreamer-arm64.tar.xz.sha256 >/dev/null 2>&1; then
+    if sha256sum -c gstreamer.tar.xz.sha256 >/dev/null 2>&1; then
         echo -e "  ${GREEN}✓${NC} Verification successful"
         echo "  Extracting GStreamer..."
-        tar -xJf /tmp/gstreamer-arm64.tar.xz -C "$GSTREAMER_DIR" --strip-components=1 2>/dev/null || echo -e "  ${YELLOW}⚠${NC}  Extraction warning"
-        rm -f gstreamer-arm64.tar.xz gstreamer-arm64.tar.xz.sha256
+        tar -xJf /tmp/gstreamer.tar.xz -C "$GSTREAMER_DIR" --strip-components=1 2>/dev/null || echo -e "  ${YELLOW}⚠${NC}  Extraction warning"
+        rm -f gstreamer.tar.xz gstreamer.tar.xz.sha256
         echo -e "  ${GREEN}✓${NC} GStreamer installed to $GSTREAMER_DIR"
     else
         echo -e "  ${RED}✗${NC} Verification failed, skipping GStreamer installation"
-        rm -f gstreamer-arm64.tar.xz gstreamer-arm64.tar.xz.sha256
+        rm -f gstreamer.tar.xz gstreamer.tar.xz.sha256
     fi
 else
     echo -e "  ${YELLOW}⚠${NC}  GStreamer package not found (optional)"
